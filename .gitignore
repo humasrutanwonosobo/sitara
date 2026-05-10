@@ -1,49 +1,69 @@
-# See https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
-
-# compiled output
-dist
-tmp
-out-tsc
-*.tsbuildinfo
-.expo
-.expo-shared
-
 # dependencies
 node_modules
+.pnp
+.pnp.js
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+# next.js
+.next/
+out/
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# production
+build
+dist
 
 # misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
-npm-debug.log
-yarn-error.log
-testem.log
-/typings
-
-# System Files
+*.tsbuildinfo
 .DS_Store
 Thumbs.db
+*.pem
 
-.cursor/rules/nx-rules.mdc
-.github/instructions/nx.instructions.md
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
-# Replit
-.cache/
+# env files
+.env
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+next-env.d.ts
+
+# replit
+.replit
+.replitignore
+replit.md
 .local/
+.config/
+.agents/
+
+# pnpm (not used)
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
+# vite (not used)
+vite.config.*
+vite-env.d.ts
+
+# monorepo leftovers
+artifacts/
+/lib/
+scripts/
+attached_assets/
+tsconfig.base.json
+
+# IDE
+.idea/
+.vscode/
+.kiro/
+*.swp
+*.swo
+*~
+
+# OS
+desktop.ini
+ehthumbs.db
