@@ -165,7 +165,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               <div className="bg-white px-3 py-2.5 space-y-1.5">
                 <div className="flex items-center gap-2">
                   <PhoneCall className="h-3 w-3 text-teal-500 flex-shrink-0" />
-                  <span className="text-xs font-bold text-slate-800 font-mono tracking-wider">Ext. 404</span>
+                  <span className="text-xs font-bold text-slate-800 font-mono tracking-wider">(0286) 321030</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-3 w-3 text-slate-400 flex-shrink-0" />
