@@ -1,0 +1,26 @@
+import type { MetadataRoute } from "next";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "SITARA — Sistem Informasi Tracking Reintegrasi Narapidana",
+    short_name: "SITARA",
+    description:
+      "Platform resmi pelacakan proses reintegrasi Warga Binaan Pemasyarakatan di Rutan Wonosobo.",
+    start_url: "/",
+    display: "standalone",
+    background_color: "#080c14",
+    theme_color: "#0d9488",
+    icons: [
+      {
+        src: "/logo.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        src: "/logo.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
+    ],
+  };
+}
