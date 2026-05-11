@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { JenisLayananBadge } from "@/components/ui/jenis-layanan-badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -341,37 +340,60 @@ export default function WbpEdit() {
           </AlertDialog>
         </PageShell>
 
-        {/* Info Banner */}
-        <div className="flex items-center gap-4 bg-gradient-to-r from-teal-50 to-emerald-50/50 rounded-2xl px-5 py-3.5 border border-teal-100 flex-wrap">
-          <Avatar className="h-10 w-10 rounded-xl flex-shrink-0">
-            <AvatarFallback className="rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white text-sm font-bold">
-              {wbp.nama.slice(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="font-bold text-slate-900 text-sm">{wbp.nama}</p>
-            <p className="font-mono text-[10px] sm:text-xs text-slate-400">{wbp.nomorRegistrasi}</p>
-            {wbp.perkara && <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 truncate max-w-xs">{wbp.perkara}</p>}
-          </div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <JenisLayananBadge code={wbp.jenisLayanan} full />
-            <StatusBadge status={wbp.status} />
-            {wbp.kodeTracking && (
-              <span className="font-mono text-[10px] sm:text-xs text-teal-600 bg-teal-50 border border-teal-100 px-2 py-0.5 rounded-md">{wbp.kodeTracking}</span>
-            )}
-          </div>
-          <div className="w-full sm:w-48">
-            <div className="flex justify-between text-[10px] sm:text-xs text-slate-400 mb-1">
-              <span>Progress tahap</span>
-              <span className="font-semibold text-teal-700">{progress}%</span>
+        {/* Info Banner — compact */}
+        <div className="bg-white rounded-2xl ring-1 ring-slate-200/60 shadow-sm overflow-hidden">
+          <div className="flex items-center gap-4 px-5 py-4 flex-wrap">
+            <Avatar className="h-12 w-12 rounded-xl flex-shrink-0">
+              <AvatarFallback className="rounded-xl bg-gradient-to-br from-teal-500 to-emerald-600 text-white text-base font-bold">
+                {wbp.nama.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap mb-1">
+                <h2 className="font-bold text-slate-900 text-base">{wbp.nama}</h2>
+                <StatusBadge status={wbp.status} />
+              </div>
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="font-mono text-xs text-slate-400 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md">{wbp.nomorRegistrasi}</span>
+                <JenisLayananBadge code={wbp.jenisLayanan} full />
+                {wbp.kodeTracking && (
+                  <span className="font-mono text-xs text-teal-600 bg-teal-50 border border-teal-100 px-2 py-0.5 rounded-md">{wbp.kodeTracking}</span>
+                )}
+                {wbp.perkara && <span className="text-xs text-slate-500 truncate max-w-[200px]">{wbp.perkara}</span>}
+              </div>
             </div>
-            <Progress value={progress} className="h-1.5" />
+            <div className="flex items-center gap-4 flex-shrink-0">
+              {/* Circular progress */}
+              <div className="relative w-14 h-14">
+                <svg className="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
+                  <circle cx="28" cy="28" r="22" fill="none" stroke="#f1f5f9" strokeWidth="4" />
+                  <circle cx="28" cy="28" r="22" fill="none" stroke="url(#editProgress)" strokeWidth="4" strokeLinecap="round"
+                    strokeDasharray={`${2 * Math.PI * 22}`}
+                    strokeDashoffset={`${2 * Math.PI * 22 * (1 - progress / 100)}`}
+                    className="transition-all duration-700"
+                  />
+                  <defs>
+                    <linearGradient id="editProgress" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#14b8a6" />
+                      <stop offset="100%" stopColor="#10b981" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs font-black text-teal-700">{progress}%</span>
+                </div>
+              </div>
+              <div className="text-right hidden sm:block">
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Tahap</p>
+                <p className="text-xs font-semibold text-slate-700">{currentIdx + 1}/{TAHAP_ORDER.length}</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+        <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-5 items-start">
           {/* Form with Tabs */}
-          <div className="lg:col-span-2 bg-white rounded-2xl ring-1 ring-slate-200/60 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-2xl ring-1 ring-slate-200/60 shadow-sm overflow-hidden">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <Tabs defaultValue="profil" className="w-full">
@@ -610,6 +632,8 @@ export default function WbpEdit() {
             </Form>
           </div>
 
+          {/* Sidebar — sticky */}
+          <div className="space-y-4 xl:sticky xl:top-4">
           {/* Kode Tracking */}
           <div className="bg-white rounded-2xl ring-1 ring-slate-200/60 shadow-sm overflow-hidden">
             <div className="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
@@ -720,7 +744,7 @@ export default function WbpEdit() {
           </div>
 
           {/* Riwayat */}
-          <div className="bg-white rounded-2xl ring-1 ring-slate-200/60 shadow-sm overflow-hidden sticky top-6">
+          <div className="bg-white rounded-2xl ring-1 ring-slate-200/60 shadow-sm overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
                 <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center">
@@ -773,6 +797,7 @@ export default function WbpEdit() {
               </div>
             </ScrollArea>
           </div>
+          </div>{/* end sidebar */}
         </div>
 
       </div>
