@@ -79,6 +79,7 @@ function WbpPreviewSheet({ id, open, onClose }: { id: string | null; open: boole
       a.download = `SITARA-QR-${data?.data?.kodeTracking || "unknown"}.png`;
       a.href = canvas.toDataURL("image/png");
       a.click();
+      toast.success("QR Code berhasil diunduh!", { description: data?.data?.kodeTracking });
     };
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
