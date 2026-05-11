@@ -283,7 +283,7 @@ export default function NotificationLog() {
               </form>
               {wbpIdFilter && (
                 <p className="text-[10px] sm:text-xs text-teal-600 font-medium mt-2 ml-1">
-                  Filter aktif: ID WBP <span className="font-mono">{wbpIdFilter.slice(0, 16)}…</span>
+                  Filter aktif: ID Warga Binaan <span className="font-mono">{wbpIdFilter.slice(0, 16)}…</span>
                 </p>
               )}
             </div>
@@ -478,7 +478,7 @@ export default function NotificationLog() {
                     className="bg-slate-50 border-slate-200 text-xs rounded-xl h-9 font-mono focus-visible:ring-teal-500/30"
                   />
                   <p className="text-[10px] sm:text-xs text-slate-400 mt-1.5 leading-snug">
-                    ID WBP tersedia di halaman edit data WBP atau URL browser.
+                    ID Warga Binaan tersedia di halaman edit data Warga Binaan atau URL browser.
                   </p>
                 </div>
                 <Button

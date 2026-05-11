@@ -69,7 +69,7 @@ export default function KontakPage() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="w-full"
-                title="Lokasi Rutan Kelas IIB Wonosobo"
+                title="Lokasi Rumah Tahanan Negara Kelas IIB Wonosobo"
               />
             </div>
             <a

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { JENIS_LAYANAN_LABELS, TAHAP_ORDER } from "@/lib/constants";
-import { Search, Download, ExternalLink, CheckCircle2, Circle, Calendar } from "lucide-react";
+import { Search, Download, ExternalLink, CheckCircle2, Circle, Calendar, Printer } from "lucide-react";
 import * as XLSX from "xlsx";
 
 const ANALISA_COLS = [
@@ -132,30 +132,32 @@ export default function BukuAnalisa() {
       search ? `Pencarian: "${search}"` : null,
     ].filter(Boolean).join(" · ") || "Semua data";
 
-    // Total columns = 17 (A..Q)
-    // A=No, B=Nama, C=No.Reg, D=Alamat, E=Perkara, F=Jenis Layanan,
-    // G-N = 8 tahap, O=Tgl Pelaksanaan, P=Keterangan, Q=Tgl Update
-    const TOTAL_COLS = 17;
+    const STATUS_LABELS: Record<string, string> = { aktif: "Aktif", selesai: "Selesai", ditolak: "Ditolak" };
+
+    // Total columns = 18 (A..R)
+    // A=No, B=Nama, C=No.Reg, D=Alamat, E=Perkara, F=Jenis Layanan, G=Status,
+    // H-O = 8 tahap, P=Tgl Pelaksanaan, Q=Keterangan, R=Tgl Update
+    const TOTAL_COLS = 18;
     const empty = Array(TOTAL_COLS).fill("");
 
     const aoa: (string | number)[][] = [
       // ── Kop surat ──
       ["SITARA — Sistem Informasi Tracking Reintegrasi Narapidana", ...Array(TOTAL_COLS - 1).fill("")],
-      ["Rutan Kelas IIB Wonosobo · Kementerian Imigrasi dan Pemasyarakatan RI", ...Array(TOTAL_COLS - 1).fill("")],
+      ["Rumah Tahanan Negara Kelas IIB Wonosobo · Kementerian Imigrasi dan Pemasyarakatan RI", ...Array(TOTAL_COLS - 1).fill("")],
       empty,
       // ── Judul dokumen ──
       ["BUKU ANALISA PROSES REINTEGRASI WARGA BINAAN PEMASYARAKATAN", ...Array(TOTAL_COLS - 1).fill("")],
       empty,
       // ── Metadata ──
-      ["Tanggal Cetak", ":", tsDisplay,  "", "", "", "Filter", ":", filterInfo, ...Array(TOTAL_COLS - 9).fill("")],
-      ["Total Data",    ":", rows.length, "", "", "", "Aktif",  ":", aktifCount,  "Selesai", ":", selesaiCount, "Ditolak", ":", ditolakCount, "", ""],
+      ["Tanggal Cetak", ":", tsDisplay, "", "", "", "", "Filter", ":", filterInfo, ...Array(TOTAL_COLS - 10).fill("")],
+      ["Total Data", ":", rows.length, "", "", "", "", "Aktif", ":", aktifCount, "Selesai", ":", selesaiCount, "Ditolak", ":", ditolakCount, "", ""],
       empty,
       // ── Header kolom baris 1 ──
-      ["No", "Nama Narapidana", "No. Registrasi", "Alamat", "Perkara", "Jenis Layanan",
+      ["No", "Nama Narapidana", "No. Registrasi", "Alamat", "Perkara", "Jenis Layanan", "Status",
         "STATUS PROSES (8 Tahap)", "", "", "", "", "", "", "",
         "Tgl. Pelaksanaan", "Keterangan Proses", "Tgl. Update"],
       // ── Header kolom baris 2 (sub-header status proses) ──
-      ["", "", "", "", "", "",
+      ["", "", "", "", "", "", "",
         ...ANALISA_COLS.map(c => c.short.replace("\n", " ")),
         "", "", ""],
       // ── Data ──
@@ -166,6 +168,7 @@ export default function BukuAnalisa() {
         w.alamat || "-",
         w.perkara || "-",
         JENIS_LAYANAN_LABELS[w.jenisLayanan] || w.jenisLayanan,
+        STATUS_LABELS[w.status] || w.status,
         ...ANALISA_COLS.map(c => isStepDone(w.tahapSaatIni, c.key) ? "✓" : ""),
         w.tanggalPelaksanaan ? new Date(w.tanggalPelaksanaan).toLocaleDateString("id-ID") : "-",
         w.catatan || "-",
@@ -176,12 +179,12 @@ export default function BukuAnalisa() {
       // ── Ringkasan ──
       ["RINGKASAN STATISTIK", ...Array(TOTAL_COLS - 1).fill("")],
       ["Total Warga Binaan", rows.length, "", "Aktif", aktifCount, "", "Selesai", selesaiCount, "", "Ditolak", ditolakCount, "", "Tingkat Keberhasilan",
-        rows.length ? `${Math.round((selesaiCount / rows.length) * 100)}%` : "0%", "", "", ""],
+        rows.length ? `${Math.round((selesaiCount / rows.length) * 100)}%` : "0%", "", "", "", ""],
       empty,
       // ── Legenda ──
       ["KETERANGAN:", ...Array(TOTAL_COLS - 1).fill("")],
-      ["✓ = Tahap telah diselesaikan", "", "", "- = Tahap belum dicapai / tidak berlaku", ...Array(TOTAL_COLS - 4).fill("")],
-      ["Status Aktif = Proses sedang berjalan", "", "", "Status Selesai = SK sudah turun dan diterima", ...Array(TOTAL_COLS - 4).fill("")],
+      ["✓ = Tahap telah diselesaikan", "", "", "", "- = Tahap belum dicapai / tidak berlaku", ...Array(TOTAL_COLS - 5).fill("")],
+      ["Status Aktif = Proses sedang berjalan", "", "", "", "Status Selesai = SK sudah turun dan diterima", ...Array(TOTAL_COLS - 5).fill("")],
       empty,
       // ── Footer ──
       [`Dokumen ini dibuat secara otomatis oleh SITARA pada ${tsDisplay}`, ...Array(TOTAL_COLS - 1).fill("")],
@@ -191,28 +194,29 @@ export default function BukuAnalisa() {
     const ws = XLSX.utils.aoa_to_sheet(aoa);
 
     // Merge cells
-    const dataStartRow = 9; // 0-indexed row of first data header
+    const dataStartRow = 9; // 0-indexed row of first data header (row 8 = header 1, row 9 = header 2)
     ws["!merges"] = [
       // Kop
       { s: { r: 0, c: 0 }, e: { r: 0, c: TOTAL_COLS - 1 } },
       { s: { r: 1, c: 0 }, e: { r: 1, c: TOTAL_COLS - 1 } },
       // Judul
       { s: { r: 3, c: 0 }, e: { r: 3, c: TOTAL_COLS - 1 } },
-      // Metadata kiri label+colon+value
-      { s: { r: 5, c: 2 }, e: { r: 5, c: 5 } },
-      { s: { r: 5, c: 8 }, e: { r: 5, c: TOTAL_COLS - 1 } },
-      // Header: "STATUS PROSES" span 8 cols (G-N = index 6-13)
-      { s: { r: dataStartRow - 1, c: 6 }, e: { r: dataStartRow - 1, c: 13 } },
-      // Header baris 1: No, Nama, No.Reg, Alamat, Perkara, Jenis Layanan — span 2 rows
-      { s: { r: dataStartRow - 1, c: 0 }, e: { r: dataStartRow, c: 0 } },
-      { s: { r: dataStartRow - 1, c: 1 }, e: { r: dataStartRow, c: 1 } },
-      { s: { r: dataStartRow - 1, c: 2 }, e: { r: dataStartRow, c: 2 } },
-      { s: { r: dataStartRow - 1, c: 3 }, e: { r: dataStartRow, c: 3 } },
-      { s: { r: dataStartRow - 1, c: 4 }, e: { r: dataStartRow, c: 4 } },
-      { s: { r: dataStartRow - 1, c: 5 }, e: { r: dataStartRow, c: 5 } },
-      { s: { r: dataStartRow - 1, c: 14 }, e: { r: dataStartRow, c: 14 } },
-      { s: { r: dataStartRow - 1, c: 15 }, e: { r: dataStartRow, c: 15 } },
-      { s: { r: dataStartRow - 1, c: 16 }, e: { r: dataStartRow, c: 16 } },
+      // Metadata
+      { s: { r: 5, c: 2 }, e: { r: 5, c: 6 } },
+      { s: { r: 5, c: 9 }, e: { r: 5, c: TOTAL_COLS - 1 } },
+      // Header: "STATUS PROSES" span 8 cols (H-O = index 7-14)
+      { s: { r: dataStartRow - 1, c: 7 }, e: { r: dataStartRow - 1, c: 14 } },
+      // Header baris 1: Non-tahap columns — span 2 rows
+      { s: { r: dataStartRow - 1, c: 0 }, e: { r: dataStartRow, c: 0 } },   // No
+      { s: { r: dataStartRow - 1, c: 1 }, e: { r: dataStartRow, c: 1 } },   // Nama
+      { s: { r: dataStartRow - 1, c: 2 }, e: { r: dataStartRow, c: 2 } },   // No.Reg
+      { s: { r: dataStartRow - 1, c: 3 }, e: { r: dataStartRow, c: 3 } },   // Alamat
+      { s: { r: dataStartRow - 1, c: 4 }, e: { r: dataStartRow, c: 4 } },   // Perkara
+      { s: { r: dataStartRow - 1, c: 5 }, e: { r: dataStartRow, c: 5 } },   // Jenis Layanan
+      { s: { r: dataStartRow - 1, c: 6 }, e: { r: dataStartRow, c: 6 } },   // Status
+      { s: { r: dataStartRow - 1, c: 15 }, e: { r: dataStartRow, c: 15 } }, // Tgl Pelaksanaan
+      { s: { r: dataStartRow - 1, c: 16 }, e: { r: dataStartRow, c: 16 } }, // Keterangan
+      { s: { r: dataStartRow - 1, c: 17 }, e: { r: dataStartRow, c: 17 } }, // Tgl Update
       // Ringkasan title
       { s: { r: aoa.length - 9, c: 0 }, e: { r: aoa.length - 9, c: TOTAL_COLS - 1 } },
       // Legenda title
@@ -230,17 +234,18 @@ export default function BukuAnalisa() {
       { wch: 30 },  // D: Alamat
       { wch: 22 },  // E: Perkara
       { wch: 18 },  // F: Jenis Layanan
-      { wch: 14 },  // G: Verifikasi Rutan
-      { wch: 14 },  // H: Pengusulan Litmas
-      { wch: 14 },  // I: Sidang TPP
-      { wch: 14 },  // J: Upload SDP
-      { wch: 14 },  // K: Verifikasi Kanwil
-      { wch: 14 },  // L: Ditjen PAS
-      { wch: 16 },  // M: SK Terbit
-      { wch: 12 },  // N: Turun SK
-      { wch: 18 },  // O: Tgl Pelaksanaan
-      { wch: 30 },  // P: Keterangan
-      { wch: 14 },  // Q: Tgl Update
+      { wch: 12 },  // G: Status
+      { wch: 14 },  // H: Verifikasi Rutan
+      { wch: 14 },  // I: Pengusulan Litmas
+      { wch: 14 },  // J: Sidang TPP
+      { wch: 14 },  // K: Upload SDP
+      { wch: 14 },  // L: Verifikasi Kanwil
+      { wch: 14 },  // M: Ditjen PAS
+      { wch: 16 },  // N: SK Terbit
+      { wch: 12 },  // O: Turun SK
+      { wch: 18 },  // P: Tgl Pelaksanaan
+      { wch: 30 },  // Q: Keterangan
+      { wch: 14 },  // R: Tgl Update
     ];
 
     // Row heights for header rows
@@ -255,12 +260,102 @@ export default function BukuAnalisa() {
     wb.Props = {
       Title: "Buku Analisa Proses Reintegrasi Warga Binaan",
       Subject: "Reintegrasi Narapidana",
-      Author: "SITARA — Rutan Kelas IIB Wonosobo",
+      Author: "SITARA — Rumah Tahanan Negara Kelas IIB Wonosobo",
       Company: "Kementerian Imigrasi dan Pemasyarakatan RI",
       CreatedDate: now,
     };
     XLSX.utils.book_append_sheet(wb, ws, "Buku Analisa");
     XLSX.writeFile(wb, `SITARA_BukuAnalisa_${tsFile}.xlsx`);
+  };
+
+  const handlePrint = () => {
+    const printArea = document.getElementById("buku-analisa-table");
+    if (!printArea) return;
+
+    const printWindow = window.open("", "_blank", "width=1200,height=800");
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Buku Analisa Proses — SITARA</title>
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 10px; padding: 16px; }
+          .header { text-align: center; margin-bottom: 16px; }
+          .header h1 { font-size: 14px; font-weight: 700; }
+          .header p { font-size: 10px; color: #666; margin-top: 2px; }
+          .meta { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 9px; color: #555; }
+          table { width: 100%; border-collapse: collapse; font-size: 9px; }
+          th, td { border: 1px solid #ccc; padding: 4px 6px; text-align: left; vertical-align: middle; }
+          th { background: #1e293b; color: white; font-weight: 600; text-align: center; }
+          th.tahap { background: #0d9488; }
+          tr:nth-child(even) td { background: #f8fafc; }
+          .status-aktif { background: #dbeafe; color: #1d4ed8; font-weight: 700; text-align: center; border-radius: 4px; padding: 2px 6px; }
+          .status-selesai { background: #d1fae5; color: #047857; font-weight: 700; text-align: center; border-radius: 4px; padding: 2px 6px; }
+          .status-ditolak { background: #fee2e2; color: #b91c1c; font-weight: 700; text-align: center; border-radius: 4px; padding: 2px 6px; }
+          .check { color: #059669; font-weight: 700; text-align: center; }
+          .empty { color: #cbd5e1; text-align: center; }
+          .footer { margin-top: 16px; font-size: 8px; color: #999; text-align: center; }
+          @media print { body { padding: 0; } @page { size: landscape; margin: 10mm; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>BUKU ANALISA PROSES REINTEGRASI WARGA BINAAN PEMASYARAKATAN</h1>
+          <p>Rumah Tahanan Negara Kelas IIB Wonosobo · Kementerian Imigrasi dan Pemasyarakatan RI</p>
+        </div>
+        <div class="meta">
+          <span>Dicetak: ${new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })} · ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>
+          <span>Total: ${rows.length} data</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">No</th>
+              <th rowspan="2">Nama</th>
+              <th rowspan="2">No. Reg</th>
+              <th rowspan="2">Alamat</th>
+              <th rowspan="2">Perkara</th>
+              <th rowspan="2">Layanan</th>
+              <th rowspan="2">Status</th>
+              <th colspan="8" class="tahap">STATUS PROSES</th>
+              <th rowspan="2">Tgl. Pelaksanaan</th>
+              <th rowspan="2">Keterangan</th>
+              <th rowspan="2">Tgl. Update</th>
+            </tr>
+            <tr>
+              ${ANALISA_COLS.map(c => `<th class="tahap">${c.short.replace("\n", " ")}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((w, i) => `
+              <tr>
+                <td style="text-align:center">${i + 1}</td>
+                <td>${w.nama}</td>
+                <td><code>${w.nomorRegistrasi}</code></td>
+                <td>${w.alamat || "-"}</td>
+                <td>${w.perkara || "-"}</td>
+                <td style="text-align:center">${w.jenisLayanan}</td>
+                <td><span class="status-${w.status}">${w.status === "aktif" ? "Aktif" : w.status === "selesai" ? "Selesai" : "Ditolak"}</span></td>
+                ${ANALISA_COLS.map(c => isStepDone(w.tahapSaatIni, c.key) ? '<td class="check">✓</td>' : '<td class="empty">—</td>').join("")}
+                <td>${w.tanggalPelaksanaan ? new Date(w.tanggalPelaksanaan).toLocaleDateString("id-ID") : "-"}</td>
+                <td>${w.catatan || "-"}</td>
+                <td>${new Date(w.updatedAt).toLocaleDateString("id-ID")}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        <div class="footer">
+          SITARA — Sistem Informasi Tracking Reintegrasi Narapidana · Rumah Tahanan Negara Kelas IIB Wonosobo
+        </div>
+      </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => printWindow.print(), 300);
   };
 
   return (
@@ -269,15 +364,24 @@ export default function BukuAnalisa() {
         <PageShell
           title="Buku Analisa Proses"
           breadcrumbItems={[{ label: "Buku Analisa" }]}
-          subtitle="Rekapitulasi tahap proses reintegrasi Warga Binaan — Rutan Kelas IIB Wonosobo"
+          subtitle="Rekapitulasi tahap proses reintegrasi Warga Binaan — Rumah Tahanan Negara Kelas IIB Wonosobo"
         >
-          <button
-            onClick={handleExportXLSX}
-            className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors shadow-sm flex-shrink-0"
-          >
-            <Download className="h-4 w-4" />
-            Unduh XLSX
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrint}
+              className="flex items-center gap-2 bg-slate-600 hover:bg-slate-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors shadow-sm flex-shrink-0"
+            >
+              <Printer className="h-4 w-4" />
+              Cetak
+            </button>
+            <button
+              onClick={handleExportXLSX}
+              className="flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors shadow-sm flex-shrink-0"
+            >
+              <Download className="h-4 w-4" />
+              Unduh XLSX
+            </button>
+          </div>
         </PageShell>
 
         {/* Filter bar */}
@@ -323,40 +427,32 @@ export default function BukuAnalisa() {
           {/* Scrollable table */}
           <div ref={scrollRef} className="overflow-x-auto cursor-grab active:cursor-grabbing select-none"
             style={{ scrollbarWidth: "thin" }}>
-            <table className="w-full border-collapse text-xs min-w-[1200px]">
+            <table id="buku-analisa-table" className="w-full border-collapse text-xs min-w-[1200px]">
               <thead>
                 <tr className="bg-slate-700 text-white">
-                  <th className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 sticky left-0 bg-slate-700 z-10 min-w-8">No</th>
-                  <th className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 sticky left-8 bg-slate-700 z-10 min-w-40">Nama Narapidana</th>
-                  <th className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-0 sm:min-w-28">No. Registrasi</th>
-                  <th className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-40">Alamat</th>
-                  <th className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-28">Perkara</th>
-                  <th className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-20">Jenis Layanan</th>
+                  <th rowSpan={2} className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 sticky left-0 bg-slate-700 z-10 min-w-8 align-middle">No</th>
+                  <th rowSpan={2} className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 sticky left-8 bg-slate-700 z-10 min-w-40 align-middle">Nama Narapidana</th>
+                  <th rowSpan={2} className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-0 sm:min-w-28 align-middle">No. Registrasi</th>
+                  <th rowSpan={2} className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-40 align-middle">Alamat</th>
+                  <th rowSpan={2} className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-28 align-middle">Perkara</th>
+                  <th rowSpan={2} className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-20 align-middle">Jenis Layanan</th>
+                  <th rowSpan={2} className="px-3 py-3 text-center font-semibold text-xs border-r border-slate-600 min-w-20 align-middle">Status</th>
 
                   {/* Status proses sub-header */}
                   <th colSpan={8} className="px-3 py-2 text-center font-bold text-xs border-r border-slate-600 bg-teal-700">
                     STATUS PROSES
                   </th>
 
-                  <th className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-0 sm:min-w-28">Tgl. Pelaksanaan</th>
-                  <th className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-0 sm:min-w-44">Keterangan Proses</th>
-                  <th className="px-3 py-3 text-left font-semibold text-xs min-w-24">Tgl. Update</th>
+                  <th rowSpan={2} className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-0 sm:min-w-28 align-middle">Tgl. Pelaksanaan</th>
+                  <th rowSpan={2} className="px-3 py-3 text-left font-semibold text-xs border-r border-slate-600 min-w-0 sm:min-w-44 align-middle">Keterangan Proses</th>
+                  <th rowSpan={2} className="px-3 py-3 text-left font-semibold text-xs min-w-24 align-middle">Tgl. Update</th>
                 </tr>
                 <tr className="bg-slate-600 text-white">
-                  <th className="border-r border-slate-500 sticky left-0 bg-slate-600 z-10" />
-                  <th className="border-r border-slate-500 sticky left-8 bg-slate-600 z-10" />
-                  <th className="border-r border-slate-500" />
-                  <th className="border-r border-slate-500" />
-                  <th className="border-r border-slate-500" />
-                  <th className="border-r border-slate-500" />
                   {ANALISA_COLS.map((col) => (
                     <th key={col.key} className="px-1.5 py-2 text-center font-semibold text-[10px] sm:text-xs border-r border-slate-500 min-w-18 leading-tight whitespace-pre-line bg-teal-600/80">
                       {col.short}
                     </th>
                   ))}
-                  <th className="border-r border-slate-500" />
-                  <th className="border-r border-slate-500" />
-                  <th />
                 </tr>
               </thead>
               <tbody>
@@ -370,6 +466,7 @@ export default function BukuAnalisa() {
                         <td className="px-3 py-3 border-r border-slate-100"><div className="h-4 w-28 bg-slate-100 rounded animate-pulse" /></td>
                         <td className="px-3 py-3 border-r border-slate-100"><div className="h-4 w-16 bg-slate-100 rounded animate-pulse" /></td>
                         <td className="px-3 py-3 border-r border-slate-100"><div className="h-5 w-12 bg-slate-100 rounded-full animate-pulse" /></td>
+                        <td className="px-3 py-3 border-r border-slate-100"><div className="h-5 w-14 bg-slate-100 rounded-full animate-pulse" /></td>
                         {Array.from({ length: 8 }).map((_, j) => (
                           <td key={j} className="px-2 py-3 border-r border-slate-100 text-center"><div className="w-7 h-7 rounded-full bg-slate-100 animate-pulse mx-auto" /></td>
                         ))}
@@ -382,7 +479,7 @@ export default function BukuAnalisa() {
                 )}
                 {!isLoading && rows.length === 0 && (
                   <tr>
-                    <td colSpan={15} className="text-center py-16 text-slate-400 text-sm">
+                    <td colSpan={18} className="text-center py-16 text-slate-400 text-sm">
                       {search ? `Tidak ada data untuk "${search}"` : "Belum ada data Warga Binaan"}
                     </td>
                   </tr>
@@ -410,12 +507,10 @@ export default function BukuAnalisa() {
                           </div>
                           <div className="min-w-0">
                             <Link href={`/dashboard/wbp/${w.id}/edit`}>
-                              <span className="font-semibold text-slate-800 hover:text-teal-700 cursor-pointer group-hover:underline decoration-teal-500/40 text-xs block truncate max-w-32">
+                              <span className="font-semibold text-slate-800 hover:text-teal-700 cursor-pointer group-hover:underline decoration-teal-500/40 text-xs block">
                                 {w.nama}
                               </span>
                             </Link>
-                            {isDitolak && <span className="text-[10px] sm:text-xs font-bold text-red-500 uppercase">Ditolak</span>}
-                            {isSelesai && <span className="text-[10px] sm:text-xs font-bold text-emerald-500 uppercase">Selesai</span>}
                           </div>
                         </div>
                       </td>
@@ -443,6 +538,19 @@ export default function BukuAnalisa() {
                       <td className="px-3 py-3 border-r border-slate-100">
                         <span className={`inline-block text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-full border ${LAYANAN_COLOR[w.jenisLayanan] || "bg-slate-50 text-slate-600 border-slate-200"}`}>
                           {w.jenisLayanan}
+                        </span>
+                      </td>
+
+                      {/* Status */}
+                      <td className="px-3 py-3 border-r border-slate-100 text-center">
+                        <span className={`inline-block text-[10px] sm:text-xs font-bold px-2.5 py-1 rounded-full border ${
+                          isDitolak
+                            ? "bg-red-100 text-red-700 border-red-200"
+                            : isSelesai
+                            ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+                            : "bg-blue-100 text-blue-700 border-blue-200"
+                        }`}>
+                          {isDitolak ? "Ditolak" : isSelesai ? "Selesai" : "Aktif"}
                         </span>
                       </td>
 
@@ -494,7 +602,7 @@ export default function BukuAnalisa() {
               <span className="font-semibold">✓</span> = Tahap telah diselesaikan · Data bersumber dari SDP Kemenimipas
             </p>
             <p className="text-[10px] sm:text-xs text-slate-400">
-              Rutan Kelas IIB Wonosobo · SITARA
+              Rumah Tahanan Negara Kelas IIB Wonosobo · SITARA
             </p>
           </div>
         </div>

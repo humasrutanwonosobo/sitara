@@ -12,7 +12,7 @@ export const DOCS_DATA: DocsItem[] = [
     sectionTitle: "Apa itu SITARA?",
     items: [
       "SITARA adalah Sistem Informasi Tracking Reintegrasi Narapidana.",
-      "Dipakai untuk memantau proses reintegrasi Warga Binaan di Rutan Kelas IIB Wonosobo.",
+      "Dipakai untuk memantau proses reintegrasi Warga Binaan di Rumah Tahanan Negara Kelas IIB Wonosobo.",
       "Mendukung pemantauan status, notifikasi WhatsApp, dan rekap analisa proses.",
     ],
     sortOrder: 0,

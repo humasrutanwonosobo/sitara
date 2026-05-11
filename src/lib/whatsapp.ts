@@ -15,7 +15,17 @@ export async function kirimWhatsApp(payload: WAPayload): Promise<WAResponse> {
     return { status: false, reason: "FONNTE_TOKEN tidak dikonfigurasi" };
   }
 
-  const nomor = payload.target.replace(/^0/, "62").replace(/\D/g, "");
+  // Normalisasi nomor ke format 628xxx (tanpa +, tanpa spasi/dash)
+  let nomor = payload.target.replace(/\D/g, "");
+  if (nomor.startsWith("620")) {
+    nomor = "62" + nomor.slice(3);
+  } else if (nomor.startsWith("62")) {
+    // sudah benar
+  } else if (nomor.startsWith("0")) {
+    nomor = "62" + nomor.slice(1);
+  } else if (nomor.startsWith("8")) {
+    nomor = "62" + nomor;
+  }
 
   try {
     const response = await fetch("https://api.fonnte.com/send", {

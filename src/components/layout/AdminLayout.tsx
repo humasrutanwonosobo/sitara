@@ -17,7 +17,7 @@ import {
 
 const NAV_MAIN = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/wbp", label: "Data WBP", icon: Users },
+  { href: "/dashboard/wbp", label: "Data Warga Binaan", icon: Users },
   { href: "/dashboard/buku-analisa", label: "Buku Analisa", icon: BookOpen },
   { href: "/dashboard/notifikasi", label: "Notifikasi WA", icon: MessageSquare },
 ];
@@ -33,7 +33,7 @@ function NavItem({ href, label, icon: Icon, active }: { href: string; label: str
   return (
     <Link
       href={href}
-      className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all text-left group ${
+      className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-all text-left group outline-none focus-visible:outline-none ${
         active
           ? "bg-teal-50 text-teal-700 font-semibold ring-1 ring-teal-100"
           : "text-slate-500 hover:text-slate-800 hover:bg-slate-50"
@@ -158,7 +158,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                   </div>
                   <div>
                     <p className="text-xs font-bold text-white leading-tight">Helpdesk SITARA</p>
-                    <p className="text-[10px] sm:text-xs text-teal-100/80 mt-0.5">Rutan Kelas IIB Wonosobo</p>
+                    <p className="text-[10px] sm:text-xs text-teal-100/80 mt-0.5">Rumah Tahanan Negara Kelas IIB Wonosobo</p>
                   </div>
                 </div>
               </div>

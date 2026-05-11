@@ -1,4 +1,4 @@
-export const metadata = {"title":"Tambah Data WBP"};
+export const metadata = {"title":"Tambah Data Warga Binaan"};
 
 import WbpAddContent from "@/components/wbp/WbpAddContent";
 

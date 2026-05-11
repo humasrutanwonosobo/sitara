@@ -7,7 +7,7 @@ import { z } from "zod";
 
 const sendNotifSchema = z.object({
   wbpId: z.string().uuid(),
-  nomorTujuan: z.string().min(1),
+  nomorTujuan: z.string().optional(),
   pesan: z.string().optional(),
 });
 
@@ -18,12 +18,14 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) return NextResponse.json({ error: parsed.error.message }, { status: 400 });
     const { wbpId, nomorTujuan, pesan } = parsed.data;
     const wbps = await db.select().from(wbpTable).where(eq(wbpTable.id, wbpId)).limit(1);
-    if (!wbps[0]) return NextResponse.json({ error: "WBP tidak ditemukan" }, { status: 404 });
+    if (!wbps[0]) return NextResponse.json({ error: "Warga Binaan tidak ditemukan" }, { status: 404 });
+    const target = nomorTujuan || wbps[0].nomorHpKeluarga;
+    if (!target) return NextResponse.json({ error: "Nomor HP keluarga belum diisi" }, { status: 400 });
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
     const message = pesan ?? buatPesan(wbps[0].nama, wbps[0].jenisLayanan, wbps[0].tahapSaatIni, `${baseUrl}/tracking/${wbps[0].kodeTracking}`);
-    const result = await kirimWhatsApp({ target: nomorTujuan, message });
+    const result = await kirimWhatsApp({ target, message });
     await db.insert(logNotifikasiTable).values({
-      wbpId, nomorHp: nomorTujuan, pesan: message, statusKirim: result.status ? "terkirim" : "gagal",
+      wbpId, nomorHp: target, pesan: message, statusKirim: result.status ? "terkirim" : "gagal",
     });
     return NextResponse.json({ data: { success: result.status, message: result.status ? "Notifikasi terkirim" : "Gagal mengirim notifikasi" } });
   } catch { return NextResponse.json({ error: "Unauthorized" }, { status: 401 }); }

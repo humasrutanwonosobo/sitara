@@ -220,7 +220,7 @@ export default function TrackingDetail() {
           {isDitolak && !wbp.catatan && (
             <div className="mt-6 flex items-center gap-3 bg-red-500/8 border border-red-500/20 rounded-2xl px-5 py-3.5">
               <AlertCircle className="h-4 w-4 text-red-400 flex-shrink-0" />
-              <p className="text-sm text-red-300/60">Permohonan ditolak. Hubungi petugas Rutan Kelas IIB Wonosobo untuk keterangan lebih lanjut.</p>
+              <p className="text-sm text-red-300/60">Permohonan ditolak. Hubungi petugas Rumah Tahanan Negara Kelas IIB Wonosobo untuk keterangan lebih lanjut.</p>
             </div>
           )}
         </div>
@@ -429,7 +429,7 @@ export default function TrackingDetail() {
                 </div>
                 <h3 className="text-sm font-bold text-white mb-2">Perlu Bantuan?</h3>
                 <p className="text-xs text-white/35 mb-4 leading-relaxed">
-                  Hubungi petugas informasi di Rutan Kelas IIB Wonosobo untuk keterangan lebih lanjut mengenai proses ini.
+                  Hubungi petugas informasi di Rumah Tahanan Negara Kelas IIB Wonosobo untuk keterangan lebih lanjut mengenai proses ini.
                 </p>
                 <div className="space-y-2 text-xs text-white/30">
                   <div className="flex items-center gap-2">

@@ -2,24 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { db, wbpTable, riwayatStatusTable, insertWbpSchema } from "@/lib/db";
 import { eq, ilike, or, and, desc, count } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth/session";
+import { sanitizeWbpData } from "@/lib/utils/sanitize-wbp";
+import { generateKodeTracking, mapWbp } from "@/lib/utils/wbp-helpers";
 
 const TAHAP_VALUES = ["verifikasi_rutan","pengusulan_litmas","sidang_tpp_upt","upload_sdp","verifikasi_kanwil","proses_ditjen_pas","sk_terbit","turun_sk"] as const;
 type TahapValue = typeof TAHAP_VALUES[number];
-
-function generateKodeTracking(jenisLayanan: string): string {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  const random = Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
-  const kode = jenisLayanan === "ASIMILASI" ? "AS" : jenisLayanan;
-  return `SITARA-${kode}-${random}`;
-}
-
-function mapWbp(w: typeof wbpTable.$inferSelect) {
-  return { id:w.id, kodeTracking:w.kodeTracking, nama:w.nama, nomorRegistrasi:w.nomorRegistrasi,
-    jenisKelamin:w.jenisKelamin, tempatLahir:w.tempatLahir, tanggalLahir:w.tanggalLahir,
-    nomorHpKeluarga:w.nomorHpKeluarga, namaKontakKeluarga:w.namaKontakKeluarga, perkara:w.perkara,
-    alamat:w.alamat, tanggalPelaksanaan:w.tanggalPelaksanaan, jenisLayanan:w.jenisLayanan,
-    tahapSaatIni:w.tahapSaatIni, status:w.status, catatan:w.catatan, createdAt:w.createdAt, updatedAt:w.updatedAt };
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -55,9 +42,10 @@ export async function POST(request: NextRequest) {
     await requireAuth();
     const parsed = insertWbpSchema.safeParse(await request.json());
     if (!parsed.success) return NextResponse.json({ error: parsed.error.message }, { status: 400 });
-    const kodeTracking = generateKodeTracking(parsed.data.jenisLayanan);
-    const [created] = await db.insert(wbpTable).values({ ...parsed.data, kodeTracking }).returning();
-    if (parsed.data.tahapSaatIni) await db.insert(riwayatStatusTable).values({ wbpId: created!.id, tahap: parsed.data.tahapSaatIni as TahapValue, keterangan: "Data WBP dibuat" });
+    const sanitized = sanitizeWbpData(parsed.data);
+    const kodeTracking = generateKodeTracking(sanitized.jenisLayanan);
+    const [created] = await db.insert(wbpTable).values({ ...sanitized, kodeTracking }).returning();
+    if (sanitized.tahapSaatIni) await db.insert(riwayatStatusTable).values({ wbpId: created!.id, tahap: sanitized.tahapSaatIni as TahapValue, keterangan: "Data Warga Binaan dibuat" });
     return NextResponse.json({ data: mapWbp(created!) }, { status: 201 });
   } catch (err: unknown) {
     const msg = (err as { message?: string }).message ?? "";

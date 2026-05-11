@@ -56,7 +56,7 @@ function exportXLSX(rows: WbpItem[], stats: DashboardStats, statusFilter: string
 
   const aoa: (string | number)[][] = [
     ["SITARA — Sistem Informasi Tracking Reintegrasi Narapidana", ...Array(TOTAL_COLS - 1).fill("")],
-    ["Rutan Kelas IIB Wonosobo · Kementerian Imigrasi dan Pemasyarakatan RI", ...Array(TOTAL_COLS - 1).fill("")],
+    ["Rumah Tahanan Negara Kelas IIB Wonosobo · Kementerian Imigrasi dan Pemasyarakatan RI", ...Array(TOTAL_COLS - 1).fill("")],
     empty,
     ["LAPORAN DATA WARGA BINAAN PEMASYARAKATAN", ...Array(TOTAL_COLS - 1).fill("")],
     empty,
@@ -119,7 +119,7 @@ function exportXLSX(rows: WbpItem[], stats: DashboardStats, statusFilter: string
   wb.Props = {
     Title: "Laporan Data Warga Binaan",
     Subject: "Laporan Reintegrasi Narapidana",
-    Author: "SITARA — Rutan Kelas IIB Wonosobo",
+    Author: "SITARA — Rumah Tahanan Negara Kelas IIB Wonosobo",
     Company: "Kementerian Imigrasi dan Pemasyarakatan RI",
     CreatedDate: now,
   };
@@ -288,7 +288,7 @@ export default function Laporan() {
                 </div>
                 <Separator className="my-4" />
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400">Total WBP terdaftar</span>
+                  <span className="text-xs text-slate-400">Total Warga Binaan terdaftar</span>
                   <span className="text-sm font-bold text-slate-900">{stats?.totalWbp ?? 0}</span>
                 </div>
               </div>
@@ -299,7 +299,7 @@ export default function Laporan() {
                   <TrendingUp className="h-4 w-4 text-slate-400" />
                   <h2 className="text-sm font-bold text-slate-800">Distribusi per Tahap Proses</h2>
                   <span className="ml-auto text-[10px] sm:text-xs text-slate-400 bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-full">
-                    WBP Aktif
+                    Warga Binaan Aktif
                   </span>
                 </div>
                 <div className="space-y-2.5">
@@ -342,7 +342,7 @@ export default function Laporan() {
               <div className="p-3 sm:p-4 border-b border-slate-100 bg-slate-50/50 space-y-3">
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                  <h2 className="text-sm font-bold text-slate-800">Daftar WBP</h2>
+                  <h2 className="text-sm font-bold text-slate-800">Daftar Warga Binaan</h2>
                   <span className="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full ml-1">{filtered.length} data</span>
                   {hasActiveFilter && (
                     <button
@@ -510,10 +510,10 @@ export default function Laporan() {
                 <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/40 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                   <p className="text-[10px] sm:text-xs text-slate-400">
                     Menampilkan <span className="font-semibold text-slate-600">{filtered.length}</span> dari{" "}
-                    <span className="font-semibold text-slate-600">{allWbp?.data?.length ?? 0}</span> WBP terdaftar
+                    <span className="font-semibold text-slate-600">{allWbp?.data?.length ?? 0}</span> Warga Binaan terdaftar
                   </p>
                   <p className="text-[10px] sm:text-xs text-slate-400">
-                    Dibuat: {new Date().toLocaleString("id-ID")} · SITARA · Rutan Kelas IIB Wonosobo
+                    Dibuat: {new Date().toLocaleString("id-ID")} · SITARA · Rumah Tahanan Negara Kelas IIB Wonosobo
                   </p>
                 </div>
               )}

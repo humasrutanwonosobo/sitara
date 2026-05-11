@@ -356,7 +356,7 @@ export function useGetMe<
 }
 
 /**
- * @summary List all WBP (admin)
+ * @summary List all Warga Binaan (admin)
  */
 export const getListWbpUrl = (params?: ListWbpParams) => {
   const normalizedParams = new URLSearchParams();
@@ -419,7 +419,7 @@ export type ListWbpQueryResult = NonNullable<
 export type ListWbpQueryError = ErrorType<unknown>;
 
 /**
- * @summary List all WBP (admin)
+ * @summary List all Warga Binaan (admin)
  */
 
 export function useListWbp<
@@ -442,7 +442,7 @@ export function useListWbp<
 }
 
 /**
- * @summary Create new WBP entry
+ * @summary Create new Warga Binaan entry
  */
 export const getCreateWbpUrl = () => {
   return `/api/wbp`;
@@ -505,7 +505,7 @@ export type CreateWbpMutationBody = BodyType<CreateWbpPayload>;
 export type CreateWbpMutationError = ErrorType<ErrorResponse>;
 
 /**
- * @summary Create new WBP entry
+ * @summary Create new Warga Binaan entry
  */
 export const useCreateWbp = <
   TError = ErrorType<ErrorResponse>,
@@ -528,7 +528,7 @@ export const useCreateWbp = <
 };
 
 /**
- * @summary Regenerate tracking code for a WBP
+ * @summary Regenerate tracking code for a Warga Binaan
  */
 export const getRegenerateKodeTrackingUrl = (id: string) => {
   return `/api/wbp/${id}/regenerate-kode`;
@@ -589,7 +589,7 @@ export type RegenerateKodeTrackingMutationResult = NonNullable<
 export type RegenerateKodeTrackingMutationError = ErrorType<ErrorResponse>;
 
 /**
- * @summary Regenerate tracking code for a WBP
+ * @summary Regenerate tracking code for a Warga Binaan
  */
 export const useRegenerateKodeTracking = <
   TError = ErrorType<ErrorResponse>,
@@ -612,7 +612,7 @@ export const useRegenerateKodeTracking = <
 };
 
 /**
- * @summary Get WBP by ID (admin, full data)
+ * @summary Get Warga Binaan by ID (admin, full data)
  */
 export const getGetWbpUrl = (id: string) => {
   return `/api/wbp/${id}`;
@@ -664,7 +664,7 @@ export type GetWbpQueryResult = NonNullable<Awaited<ReturnType<typeof getWbp>>>;
 export type GetWbpQueryError = ErrorType<ErrorResponse>;
 
 /**
- * @summary Get WBP by ID (admin, full data)
+ * @summary Get Warga Binaan by ID (admin, full data)
  */
 
 export function useGetWbp<
@@ -687,7 +687,7 @@ export function useGetWbp<
 }
 
 /**
- * @summary Update WBP
+ * @summary Update Warga Binaan
  */
 export const getUpdateWbpUrl = (id: string) => {
   return `/api/wbp/${id}`;
@@ -751,7 +751,7 @@ export type UpdateWbpMutationBody = BodyType<UpdateWbpPayload>;
 export type UpdateWbpMutationError = ErrorType<ErrorResponse>;
 
 /**
- * @summary Update WBP
+ * @summary Update Warga Binaan
  */
 export const useUpdateWbp = <
   TError = ErrorType<ErrorResponse>,
@@ -774,7 +774,7 @@ export const useUpdateWbp = <
 };
 
 /**
- * @summary Delete WBP
+ * @summary Delete Warga Binaan
  */
 export const getDeleteWbpUrl = (id: string) => {
   return `/api/wbp/${id}`;
@@ -835,7 +835,7 @@ export type DeleteWbpMutationResult = NonNullable<
 export type DeleteWbpMutationError = ErrorType<unknown>;
 
 /**
- * @summary Delete WBP
+ * @summary Delete Warga Binaan
  */
 export const useDeleteWbp = <
   TError = ErrorType<unknown>,
@@ -858,7 +858,7 @@ export const useDeleteWbp = <
 };
 
 /**
- * @summary Public search for WBP tracking
+ * @summary Public search for Warga Binaan tracking
  */
 export const getSearchTrackingUrl = (params: SearchTrackingParams) => {
   const normalizedParams = new URLSearchParams();
@@ -925,7 +925,7 @@ export type SearchTrackingQueryResult = NonNullable<
 export type SearchTrackingQueryError = ErrorType<unknown>;
 
 /**
- * @summary Public search for WBP tracking
+ * @summary Public search for Warga Binaan tracking
  */
 
 export function useSearchTracking<
@@ -1039,7 +1039,7 @@ export function useGetTracking<
 }
 
 /**
- * @summary Get status history for a WBP
+ * @summary Get status history for a Warga Binaan
  */
 export const getGetRiwayatUrl = (wbpId: string) => {
   return `/api/riwayat/${wbpId}`;
@@ -1099,7 +1099,7 @@ export type GetRiwayatQueryResult = NonNullable<
 export type GetRiwayatQueryError = ErrorType<unknown>;
 
 /**
- * @summary Get status history for a WBP
+ * @summary Get status history for a Warga Binaan
  */
 
 export function useGetRiwayat<
@@ -1126,7 +1126,7 @@ export function useGetRiwayat<
 }
 
 /**
- * @summary Send WhatsApp notification to WBP family
+ * @summary Send WhatsApp notification to Warga Binaan family
  */
 export const getSendNotifikasiUrl = () => {
   return `/api/notifikasi`;
@@ -1189,7 +1189,7 @@ export type SendNotifikasiMutationBody = BodyType<SendNotifikasiPayload>;
 export type SendNotifikasiMutationError = ErrorType<unknown>;
 
 /**
- * @summary Send WhatsApp notification to WBP family
+ * @summary Send WhatsApp notification to Warga Binaan family
  */
 export const useSendNotifikasi = <
   TError = ErrorType<unknown>,
@@ -1387,7 +1387,7 @@ export function useGetDashboardStats<
 }
 
 /**
- * @summary Get recently updated WBP entries
+ * @summary Get recently updated Warga Binaan entries
  */
 export const getGetDashboardRecentUrl = () => {
   return `/api/dashboard/recent`;
@@ -1438,7 +1438,7 @@ export type GetDashboardRecentQueryResult = NonNullable<
 export type GetDashboardRecentQueryError = ErrorType<unknown>;
 
 /**
- * @summary Get recently updated WBP entries
+ * @summary Get recently updated Warga Binaan entries
  */
 
 export function useGetDashboardRecent<
