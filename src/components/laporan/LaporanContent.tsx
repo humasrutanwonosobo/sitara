@@ -171,7 +171,91 @@ export default function Laporan() {
             <Button
               variant="outline"
               className="gap-2 rounded-xl border-slate-200 h-9 text-xs sm:text-sm"
-              onClick={() => window.print()}
+              onClick={() => {
+                const printWindow = window.open("", "_blank", "width=1200,height=800");
+                if (!printWindow) return;
+                printWindow.document.write(`
+                  <!DOCTYPE html>
+                  <html>
+                  <head>
+                    <title>Laporan Data Warga Binaan — SITARA</title>
+                    <style>
+                      * { margin: 0; padding: 0; box-sizing: border-box; }
+                      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 11px; padding: 12mm; color: #1e293b; }
+                      .header { text-align: center; margin-bottom: 16px; border-bottom: 2px solid #7c3aed; padding-bottom: 10px; }
+                      .header h1 { font-size: 15px; font-weight: 800; }
+                      .header p { font-size: 11px; color: #475569; margin-top: 2px; }
+                      .meta { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 10px; color: #64748b; }
+                      .stats { display: flex; gap: 16px; margin-bottom: 16px; padding: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; }
+                      .stat-item { text-align: center; flex: 1; }
+                      .stat-item .value { font-size: 18px; font-weight: 800; }
+                      .stat-item .label { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+                      table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 12px; page-break-inside: auto; }
+                      tr { page-break-inside: avoid; }
+                      th, td { border: 1px solid #cbd5e1; padding: 5px 7px; text-align: left; vertical-align: middle; }
+                      th { background: #1e293b; color: white; font-weight: 600; font-size: 9px; text-transform: uppercase; }
+                      tbody tr:nth-child(even) td { background: #f8fafc; }
+                      .status-aktif { background: #dbeafe; color: #1d4ed8; font-weight: 700; border-radius: 3px; padding: 2px 6px; font-size: 9px; }
+                      .status-selesai { background: #d1fae5; color: #047857; font-weight: 700; border-radius: 3px; padding: 2px 6px; font-size: 9px; }
+                      .status-ditolak { background: #fee2e2; color: #b91c1c; font-weight: 700; border-radius: 3px; padding: 2px 6px; font-size: 9px; }
+                      .footer { margin-top: 20px; padding-top: 10px; border-top: 1px solid #e2e8f0; font-size: 9px; color: #94a3b8; display: flex; justify-content: space-between; }
+                      @media print { body { padding: 0; } @page { size: portrait; margin: 10mm; } }
+                    </style>
+                  </head>
+                  <body>
+                    <div class="header">
+                      <h1>LAPORAN DATA WARGA BINAAN PEMASYARAKATAN</h1>
+                      <p>Rumah Tahanan Negara Kelas IIB Wonosobo · Kementerian Imigrasi dan Pemasyarakatan RI</p>
+                    </div>
+                    <div class="meta">
+                      <span>Dicetak: ${new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })} · ${new Date().toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" })}</span>
+                      <span>${hasActiveFilter ? "Filter aktif" : "Semua data"}</span>
+                    </div>
+                    <div class="stats">
+                      <div class="stat-item"><div class="value">${stats?.totalWbp ?? 0}</div><div class="label">Total</div></div>
+                      <div class="stat-item"><div class="value" style="color:#2563eb">${stats?.aktif ?? 0}</div><div class="label">Aktif</div></div>
+                      <div class="stat-item"><div class="value" style="color:#059669">${stats?.selesai ?? 0}</div><div class="label">Selesai</div></div>
+                      <div class="stat-item"><div class="value" style="color:#dc2626">${stats?.ditolak ?? 0}</div><div class="label">Ditolak</div></div>
+                    </div>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th style="width:30px">No</th>
+                          <th>Nama</th>
+                          <th>No. Registrasi</th>
+                          <th>Layanan</th>
+                          <th>Tahap Saat Ini</th>
+                          <th style="width:60px">Status</th>
+                          <th>Keluarga</th>
+                          <th>No. WA</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${filtered.map((item, idx) => `
+                          <tr>
+                            <td style="text-align:center">${idx + 1}</td>
+                            <td style="font-weight:600">${item.nama}</td>
+                            <td style="font-family:monospace;font-size:9px">${item.nomorRegistrasi}</td>
+                            <td style="text-align:center">${item.jenisLayanan}</td>
+                            <td>${TAHAP_LABELS[item.tahapSaatIni] || item.tahapSaatIni}</td>
+                            <td style="text-align:center"><span class="status-${item.status}">${item.status === "aktif" ? "Aktif" : item.status === "selesai" ? "Selesai" : "Ditolak"}</span></td>
+                            <td>${item.namaKontakKeluarga || "—"}</td>
+                            <td style="font-family:monospace;font-size:9px">${item.nomorHpKeluarga || "—"}</td>
+                          </tr>
+                        `).join("")}
+                      </tbody>
+                    </table>
+                    <div class="footer">
+                      <span>SITARA v2.1.0 · Rumah Tahanan Negara Kelas IIB Wonosobo</span>
+                      <span>Data bersumber dari SDP Kemenimipas RI · ${filtered.length} data ditampilkan</span>
+                    </div>
+                  </body>
+                  </html>
+                `);
+                printWindow.document.close();
+                printWindow.focus();
+                setTimeout(() => printWindow.print(), 300);
+              }}
             >
               <Printer className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Cetak</span>

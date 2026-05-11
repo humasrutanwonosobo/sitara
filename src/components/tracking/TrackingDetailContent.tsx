@@ -4,7 +4,7 @@ import { useGetTracking, getGetTrackingQueryKey } from "@/lib/api-client";
 import { useParams } from "next/navigation";
 import {
   Loader2, ArrowLeft, Download, ShieldCheck, CheckCircle2,
-  Calendar, MapPin, Phone, User, AlertCircle, Clock, Info, XCircle,
+  Calendar, MapPin, Phone, User, AlertCircle, Clock, Info, XCircle, Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { JENIS_LAYANAN_LABELS, TAHAP_LABELS, STATUS_LABELS, TAHAP_ORDER } from "@/lib/constants";
@@ -61,14 +61,14 @@ export default function TrackingDetail() {
     return (
       <div className="flex-1 flex flex-col items-center justify-center py-24 gap-4 bg-[#080c14]">
         <div className="relative">
-          <div className="w-14 h-14 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-teal-400" />
+          <div className="absolute inset-0 rounded-2xl bg-teal-500/10 blur-2xl animate-pulse" />
+          <div className="relative w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500/20 to-emerald-500/10 border border-teal-500/20 flex items-center justify-center backdrop-blur-sm">
+            <Loader2 className="h-7 w-7 animate-spin text-teal-400" />
           </div>
-          <div className="absolute inset-0 rounded-2xl bg-teal-500/5 blur-xl" />
         </div>
-        <div className="text-center">
-          <p className="text-white/60 text-sm font-semibold mb-1">Memuat data</p>
-          <p className="text-white/20 text-xs">Mengambil informasi dari server...</p>
+        <div className="text-center animate-fade-in">
+          <p className="text-white/60 text-sm font-semibold mb-1">Memuat data tracking</p>
+          <p className="text-white/20 text-xs font-mono">{kode}</p>
         </div>
       </div>
     );
@@ -125,16 +125,29 @@ export default function TrackingDetail() {
     <>
       {/* ── HERO ── */}
       <div className="relative bg-[#080c14] border-b border-white/[0.05] overflow-hidden">
-        {/* Grid */}
+        {/* Animated gradient orbs */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className={`absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full ${heroGlow} blur-[120px] animate-[pulse_8s_ease-in-out_infinite]`} />
+          <div className={`absolute bottom-[-30%] right-[-10%] w-[400px] h-[400px] rounded-full ${heroGlow} blur-[100px] animate-[pulse_6s_ease-in-out_infinite_1s]`} />
+        </div>
+
+        {/* Grid pattern */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.025]"
+          className="pointer-events-none absolute inset-0 opacity-[0.02]"
           style={{
             backgroundImage: `linear-gradient(rgba(255,255,255,.7) 1px, transparent 1px),
               linear-gradient(90deg, rgba(255,255,255,.7) 1px, transparent 1px)`,
             backgroundSize: "40px 40px",
           }}
         />
-        <div className={`pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[280px] ${heroGlow} blur-[100px]`} />
+
+        {/* Floating particles */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute top-[20%] left-[15%] w-1 h-1 rounded-full bg-teal-400/30 animate-[float_6s_ease-in-out_infinite]" />
+          <div className="absolute top-[40%] right-[20%] w-1.5 h-1.5 rounded-full bg-emerald-400/20 animate-[float_8s_ease-in-out_infinite_2s]" />
+          <div className="absolute top-[60%] left-[70%] w-1 h-1 rounded-full bg-teal-300/25 animate-[float_7s_ease-in-out_infinite_1s]" />
+          <div className="absolute top-[30%] right-[40%] w-0.5 h-0.5 rounded-full bg-white/20 animate-[float_5s_ease-in-out_infinite_3s]" />
+        </div>
 
         <div className="relative max-w-5xl mx-auto px-5 pt-8 pb-10">
           <Link href="/tracking">
@@ -145,9 +158,12 @@ export default function TrackingDetail() {
           </Link>
 
           <div className="flex flex-col md:flex-row md:items-start gap-6">
-            {/* Avatar */}
-            <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br border flex items-center justify-center flex-shrink-0 shadow-xl ${avatarCls}`}>
-              <span className={`text-xl font-black ${avatarTextCls}`}>{initials}</span>
+            {/* Avatar with glow */}
+            <div className="relative">
+              <div className={`absolute inset-0 rounded-2xl ${heroGlow} blur-xl scale-150`} />
+              <div className={`relative w-16 h-16 rounded-2xl bg-gradient-to-br border flex items-center justify-center flex-shrink-0 shadow-xl backdrop-blur-sm ${avatarCls}`}>
+                <span className={`text-xl font-black ${avatarTextCls}`}>{initials}</span>
+              </div>
             </div>
 
             <div className="flex-1 min-w-0">
@@ -172,22 +188,35 @@ export default function TrackingDetail() {
               </div>
             </div>
 
-            {/* Overall progress mini */}
-            <div className="hidden md:block flex-shrink-0 text-right">
-              <p className="text-[10px] sm:text-xs text-white/25 uppercase tracking-widest font-bold mb-2">
-                {isDitolak ? "Ditolak pada Tahap" : isSelesai ? "Proses Selesai" : "Progress Keseluruhan"}
-              </p>
-              <div className="flex items-center gap-3 justify-end">
-                <div className="w-28 bg-white/[0.06] rounded-full h-1.5 overflow-hidden">
-                  <div
-                    className={`h-full bg-gradient-to-r ${progressGradient} rounded-full transition-all duration-700`}
-                    style={{ width: `${progressPct}%` }}
+            {/* Overall progress — circular */}
+            <div className="hidden md:flex flex-col items-center flex-shrink-0">
+              <div className="relative w-20 h-20">
+                {/* Background circle */}
+                <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+                  <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6" />
+                  <circle
+                    cx="40" cy="40" r="34" fill="none"
+                    stroke="url(#progressGrad)"
+                    strokeWidth="6"
+                    strokeLinecap="round"
+                    strokeDasharray={`${2 * Math.PI * 34}`}
+                    strokeDashoffset={`${2 * Math.PI * 34 * (1 - progressPct / 100)}`}
+                    className="transition-all duration-1000 ease-out"
                   />
+                  <defs>
+                    <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor={isDitolak ? "#ef4444" : isSelesai ? "#10b981" : "#14b8a6"} />
+                      <stop offset="100%" stopColor={isDitolak ? "#f43f5e" : isSelesai ? "#34d399" : "#34d399"} />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                {/* Center text */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className={`text-lg font-black ${progressColor}`}>{progressPct}%</span>
                 </div>
-                <span className={`text-sm font-black ${progressColor}`}>{progressPct}%</span>
               </div>
-              <p className="text-xs text-white/25 mt-1.5">
-                {isSelesai ? "Semua tahap selesai" : `Tahap ${currentStepIndex + 1} dari ${TAHAP_ORDER.length}`}
+              <p className="text-[10px] text-white/25 mt-2 text-center font-medium">
+                {isSelesai ? "Selesai" : isDitolak ? "Ditolak" : `${currentStepIndex + 1}/${TAHAP_ORDER.length}`}
               </p>
             </div>
           </div>
@@ -227,13 +256,34 @@ export default function TrackingDetail() {
       </div>
 
       {/* ── BODY ── */}
-      <div className="bg-[#080c14] min-h-[60vh]">
-        <div className="max-w-5xl mx-auto px-5 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+      <div className="bg-[#080c14] min-h-[60vh] relative">
+        {/* Subtle gradient mesh */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute top-[10%] left-[5%] w-[300px] h-[300px] bg-teal-500/[0.02] rounded-full blur-[80px]" />
+          <div className="absolute bottom-[20%] right-[10%] w-[250px] h-[250px] bg-emerald-500/[0.02] rounded-full blur-[80px]" />
+        </div>
+
+        {/* Celebration banner for selesai */}
+        {isSelesai && (
+          <div className="max-w-5xl mx-auto px-5 pt-6">
+            <div className="flex items-center gap-3 bg-gradient-to-r from-emerald-500/10 to-green-500/5 border border-emerald-500/20 rounded-2xl px-5 py-4 backdrop-blur-sm">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center flex-shrink-0">
+                <Sparkles className="h-5 w-5 text-emerald-400" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-emerald-300">Proses Reintegrasi Selesai</p>
+                <p className="text-xs text-emerald-400/60 mt-0.5">SK telah terbit dan diterima. Selamat atas keberhasilan proses reintegrasi.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="relative max-w-5xl mx-auto px-5 py-8 grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
           {/* ── TIMELINE ── */}
           <div className="lg:col-span-2 space-y-4">
             {/* Tahapan */}
-            <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl overflow-hidden">
+            <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl overflow-hidden backdrop-blur-sm hover:border-white/[0.12] transition-colors duration-500">
               <div className="flex items-center gap-3 px-5 py-4 border-b border-white/[0.06]">
                 <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${isDitolak ? "bg-red-500/10 border border-red-500/20" : isSelesai ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-teal-500/10 border border-teal-500/20"}`}>
                   {isDitolak
@@ -328,7 +378,7 @@ export default function TrackingDetail() {
             </div>
 
             {/* Data Pribadi */}
-            <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl overflow-hidden">
+            <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl overflow-hidden backdrop-blur-sm hover:border-white/[0.12] transition-colors duration-500">
               <div className="flex items-center gap-3 px-5 py-4 border-b border-white/[0.06]">
                 <div className="w-8 h-8 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center">
                   <User className="h-4 w-4 text-white/40" />
@@ -375,14 +425,17 @@ export default function TrackingDetail() {
           {/* ── RIGHT COLUMN ── */}
           <div className="space-y-4">
             {/* QR Code */}
-            <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-5">
+            <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-5 backdrop-blur-sm hover:border-teal-500/20 transition-all duration-500 group/qr">
               <div className="text-center mb-4">
                 <h3 className="font-bold text-white text-sm mb-1">QR Code Status</h3>
                 <p className="text-xs text-white/30">Scan untuk akses cepat ke halaman ini</p>
               </div>
               <div className="flex justify-center mb-5">
-                <div className="p-3.5 bg-white rounded-2xl shadow-lg">
-                  <QRCodeSVG value={qrUrl} size={140} level="H" includeMargin={false} ref={qrRef} />
+                <div className="relative">
+                  <div className="absolute inset-0 bg-teal-500/10 rounded-2xl blur-xl opacity-0 group-hover/qr:opacity-100 transition-opacity duration-500" />
+                  <div className="relative p-3.5 bg-white rounded-2xl shadow-lg">
+                    <QRCodeSVG value={qrUrl} size={140} level="H" includeMargin={false} ref={qrRef} />
+                  </div>
                 </div>
               </div>
               <button
@@ -396,7 +449,7 @@ export default function TrackingDetail() {
 
             {/* Info Kontak */}
             {(wbp.namaKontakKeluarga || wbp.nomorHpKeluarga) && (
-              <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-5">
+              <div className="bg-white/[0.03] border border-white/[0.07] rounded-2xl p-5 backdrop-blur-sm hover:border-green-500/20 transition-colors duration-500">
                 <div className="flex items-center gap-2.5 mb-4">
                   <div className="w-7 h-7 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center">
                     <Phone className="h-3.5 w-3.5 text-green-400" />

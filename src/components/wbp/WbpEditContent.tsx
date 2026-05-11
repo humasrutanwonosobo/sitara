@@ -107,6 +107,7 @@ export default function WbpEdit() {
       a.download = `SITARA-QR-${data?.data?.kodeTracking || "unknown"}.png`;
       a.href = canvas.toDataURL("image/png");
       a.click();
+      toast.success("QR Code berhasil diunduh!", { description: data?.data?.kodeTracking });
     };
     img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
@@ -179,6 +180,7 @@ export default function WbpEdit() {
   const handleCopyKode = (kode: string) => {
     navigator.clipboard.writeText(kode);
     setCopiedKode(true);
+    toast.success("Kode tracking disalin!", { description: kode });
     setTimeout(() => setCopiedKode(false), 2000);
   };
 
