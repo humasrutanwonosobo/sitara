@@ -48,7 +48,7 @@ export const GetMeResponse = zod.object({
 });
 
 /**
- * @summary List all WBP (admin)
+ * @summary List all Warga Binaan (admin)
  */
 export const listWbpQueryPageDefault = 1;
 export const listWbpQueryLimitDefault = 20;
@@ -116,7 +116,7 @@ export const ListWbpResponse = zod.object({
 });
 
 /**
- * @summary Create new WBP entry
+ * @summary Create new Warga Binaan entry
  */
 export const CreateWbpBody = zod.object({
   nama: zod.string(),
@@ -147,7 +147,7 @@ export const CreateWbpBody = zod.object({
 });
 
 /**
- * @summary Regenerate tracking code for a WBP
+ * @summary Regenerate tracking code for a Warga Binaan
  */
 export const RegenerateKodeTrackingParams = zod.object({
   id: zod.coerce.string(),
@@ -186,7 +186,7 @@ export const RegenerateKodeTrackingResponse = zod.object({
 });
 
 /**
- * @summary Get WBP by ID (admin, full data)
+ * @summary Get Warga Binaan by ID (admin, full data)
  */
 export const GetWbpParams = zod.object({
   id: zod.coerce.string(),
@@ -243,7 +243,7 @@ export const GetWbpResponse = zod.object({
 });
 
 /**
- * @summary Update WBP
+ * @summary Update Warga Binaan
  */
 export const UpdateWbpParams = zod.object({
   id: zod.coerce.string(),
@@ -310,7 +310,7 @@ export const UpdateWbpResponse = zod.object({
 });
 
 /**
- * @summary Delete WBP
+ * @summary Delete Warga Binaan
  */
 export const DeleteWbpParams = zod.object({
   id: zod.coerce.string(),
@@ -321,7 +321,7 @@ export const DeleteWbpResponse = zod.object({
 });
 
 /**
- * @summary Public search for WBP tracking
+ * @summary Public search for Warga Binaan tracking
  */
 export const SearchTrackingQueryParams = zod.object({
   q: zod.coerce.string().describe("Kode tracking (format SITARA-XX-XXXXXXXX)"),
@@ -412,7 +412,7 @@ export const GetTrackingResponse = zod.object({
 });
 
 /**
- * @summary Get status history for a WBP
+ * @summary Get status history for a Warga Binaan
  */
 export const GetRiwayatParams = zod.object({
   wbpId: zod.coerce.string(),
@@ -440,7 +440,7 @@ export const GetRiwayatResponse = zod.object({
 });
 
 /**
- * @summary Send WhatsApp notification to WBP family
+ * @summary Send WhatsApp notification to Warga Binaan family
  */
 export const SendNotifikasiBody = zod.object({
   wbpId: zod.string(),
@@ -510,7 +510,7 @@ export const GetDashboardStatsResponse = zod.object({
 });
 
 /**
- * @summary Get recently updated WBP entries
+ * @summary Get recently updated Warga Binaan entries
  */
 export const GetDashboardRecentResponse = zod.object({
   data: zod.array(

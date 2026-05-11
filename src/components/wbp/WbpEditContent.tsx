@@ -20,16 +20,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import { Loader2, ArrowLeft, Save, Trash2, AlertTriangle, Send, History, User, Phone, Info, Copy, RefreshCw, CheckCircle2, ExternalLink, ShieldCheck } from "lucide-react";
+import { Loader2, ArrowLeft, Save, Trash2, AlertTriangle, Send, History, User, Phone, Info, Copy, RefreshCw, CheckCircle2, ExternalLink, ShieldCheck, Download, CalendarIcon } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { useQueryClient } from "@/lib/safe-react-query";
 import { JENIS_LAYANAN_LABELS, TAHAP_LABELS, STATUS_LABELS, TAHAP_ORDER } from "@/lib/constants";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { QRCodeSVG } from "qrcode.react";
 
 const formSchema = z.object({
   nama: z.string().min(1, "Nama wajib diisi"),
@@ -84,6 +87,29 @@ export default function WbpEdit() {
   const sendNotif = useSendNotifikasi();
   const regenerateKode = useRegenerateKodeTracking();
   const [copiedKode, setCopiedKode] = useState(false);
+  const qrRef = useRef<SVGSVGElement>(null);
+
+  const downloadQR = () => {
+    if (!qrRef.current) return;
+    const svgData = new XMLSerializer().serializeToString(qrRef.current);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width + 32;
+      canvas.height = img.height + 32;
+      if (ctx) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 16, 16);
+      }
+      const a = document.createElement("a");
+      a.download = `SITARA-QR-${data?.data?.kodeTracking || "unknown"}.png`;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(svgData);
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -208,7 +234,7 @@ export default function WbpEdit() {
             <AvatarFallback className="rounded-2xl bg-slate-100 text-slate-400 text-2xl"><User /></AvatarFallback>
           </Avatar>
           <h2 className="text-lg font-bold text-slate-900 mb-2">Data Tidak Ditemukan</h2>
-          <p className="text-slate-400 text-sm mb-6">WBP mungkin telah dihapus atau ID tidak valid.</p>
+          <p className="text-slate-400 text-sm mb-6">Data mungkin telah dihapus atau ID tidak valid.</p>
           <Link href="/dashboard/wbp"><Button variant="outline" className="rounded-xl" asChild><span>Kembali ke Daftar</span></Button></Link>
         </div>
       </>
@@ -260,7 +286,7 @@ export default function WbpEdit() {
                 </AlertDialogTrigger>
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                <p className="font-semibold text-red-300">Hapus Data WBP</p>
+                <p className="font-semibold text-red-300">Hapus Data Warga Binaan</p>
                 <p className="text-slate-400 text-[10px] sm:text-xs mt-0.5">Tindakan ini tidak bisa dibatalkan</p>
               </TooltipContent>
             </Tooltip>
@@ -401,7 +427,43 @@ export default function WbpEdit() {
                       <FormField control={form.control} name="tanggalLahir" render={({ field }) => (
                         <FormItem>
                           <FieldGroup label="Tanggal Lahir">
-                            <FormControl><Input type="date" className="rounded-xl border-slate-200 h-10 text-sm focus-visible:ring-teal-500/30" {...field} /></FormControl>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    className={`w-full rounded-xl border-slate-200 h-10 text-sm justify-start text-left font-normal focus-visible:ring-teal-500/30 ${!field.value ? "text-muted-foreground" : ""}`}
+                                  >
+                                    <CalendarIcon className="mr-2 h-4 w-4 text-slate-400" />
+                                    {field.value
+                                      ? new Date(field.value).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+                                      : "Pilih tanggal"}
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0 rounded-2xl shadow-xl border-slate-200/80" align="start" sideOffset={8}>
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value ? new Date(field.value) : undefined}
+                                  onSelect={(date) => {
+                                    if (date) {
+                                      const yyyy = date.getFullYear();
+                                      const mm = String(date.getMonth() + 1).padStart(2, "0");
+                                      const dd = String(date.getDate()).padStart(2, "0");
+                                      field.onChange(`${yyyy}-${mm}-${dd}`);
+                                    } else {
+                                      field.onChange("");
+                                    }
+                                  }}
+                                  defaultMonth={field.value ? new Date(field.value) : undefined}
+                                  captionLayout="dropdown"
+                                  startMonth={new Date(1940, 0)}
+                                  endMonth={new Date()}
+                                  disabled={(date) => date > new Date()}
+                                />
+                              </PopoverContent>
+                            </Popover>
                           </FieldGroup>
                           <FormMessage />
                         </FormItem>
@@ -524,7 +586,7 @@ export default function WbpEdit() {
                         <Info className="h-4 w-4 text-teal-600 flex-shrink-0 mt-0.5" />
                         <div className="text-xs text-teal-700 space-y-1">
                           <p className="font-semibold">Tentang Notifikasi WhatsApp</p>
-                          <p>Notifikasi otomatis dikirim saat status WBP diperbarui. Pastikan nomor WA aktif dan terdaftar di WhatsApp.</p>
+                          <p>Notifikasi otomatis dikirim saat status Warga Binaan diperbarui. Pastikan nomor WA aktif dan terdaftar di WhatsApp.</p>
                           <p>Format: <span className="font-mono">628xxxxxxxxx</span> atau <span className="font-mono">08xxxxxxxxx</span></p>
                         </div>
                       </div>
@@ -580,6 +642,31 @@ export default function WbpEdit() {
                     <ExternalLink className="h-3.5 w-3.5" />
                     Buka halaman publik keluarga
                   </a>
+
+                  {/* QR Code */}
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 text-center">QR Code Tracking</p>
+                    <div className="flex justify-center mb-3">
+                      <div className="p-2.5 bg-white rounded-xl shadow-sm border border-slate-200">
+                        <QRCodeSVG
+                          value={`${typeof window !== "undefined" ? window.location.origin : ""}/tracking/${wbp.kodeTracking}`}
+                          size={140}
+                          level="H"
+                          includeMargin={false}
+                          ref={qrRef}
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      type="button"
+                      className="w-full gap-2 text-xs border-slate-200 text-slate-600 hover:bg-slate-100 rounded-lg h-8"
+                      onClick={downloadQR}
+                    >
+                      <Download className="h-3 w-3" /> Download QR
+                    </Button>
+                  </div>
 
                   <div className="bg-amber-50 border border-amber-100 rounded-xl p-3.5">
                     <div className="flex items-start gap-2">

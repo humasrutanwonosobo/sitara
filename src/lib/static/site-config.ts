@@ -9,8 +9,8 @@ export const SITE_CONFIG: Record<string, unknown> = {
     { icon: "ShieldCheck", label: "Data Resmi SDP" },
     { icon: "MessageSquare", label: "Notifikasi WhatsApp" },
   ],
-  footer_text: "© 2026 Kementerian Imigrasi dan Pemasyarakatan · Rutan Kelas IIB Wonosobo",
+  footer_text: "© 2026 Kementerian Imigrasi dan Pemasyarakatan · Rumah Tahanan Negara Kelas IIB Wonosobo",
   helpdesk_phone: "Ext. 404",
-  helpdesk_office: "Rutan Kelas IIB Wonosobo",
+  helpdesk_office: "Rumah Tahanan Negara Kelas IIB Wonosobo",
   helpdesk_hours: "Senin – Jumat · 08.00–16.00",
 };

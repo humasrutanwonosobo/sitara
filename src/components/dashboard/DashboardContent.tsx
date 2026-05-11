@@ -191,7 +191,7 @@ export default function Dashboard() {
             </Tooltip>
             <Link href="/dashboard/wbp/tambah">
               <Button className="hidden md:flex items-center gap-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white text-sm font-semibold px-4 h-9 rounded-xl shadow-sm shadow-teal-500/25">
-                + Tambah WBP
+                + Tambah Warga Binaan
               </Button>
             </Link>
           </div>
@@ -483,7 +483,7 @@ export default function Dashboard() {
                         </div>
                       </TooltipTrigger>
                       <TooltipContent side="top">
-                        <p className="font-semibold tabular-nums">{pct}% dari total WBP</p>
+                        <p className="font-semibold tabular-nums">{pct}% dari total Warga Binaan</p>
                         <p className="text-slate-400 text-[10px] sm:text-xs mt-0.5">Proporsi pada tahap ini</p>
                       </TooltipContent>
                     </Tooltip>

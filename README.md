@@ -10,7 +10,7 @@ Platform resmi untuk memantau proses reintegrasi Warga Binaan Pemasyarakatan di 
 
 ## Fitur
 
-- 🔍 **Tracking Publik** — Keluarga WBP dapat memantau status reintegrasi secara real-time menggunakan kode tracking
+- 🔍 **Tracking Publik** — Keluarga Warga Binaan dapat memantau status reintegrasi secara real-time menggunakan kode tracking
 - 📊 **Dashboard Admin** — Manajemen data Warga Binaan, statistik, dan monitoring proses
 - 📱 **Notifikasi WhatsApp** — Pengiriman status otomatis ke keluarga via Fonnte API
 - 📋 **Buku Analisa** — Rekapitulasi tahap proses reintegrasi dalam format tabel
@@ -46,8 +46,8 @@ Platform resmi untuk memantau proses reintegrasi Warga Binaan Pemasyarakatan di 
 |-------|-----------|
 | `/dashboard` | Ringkasan statistik |
 | `/dashboard/wbp` | Data Warga Binaan |
-| `/dashboard/wbp/tambah` | Tambah data WBP |
-| `/dashboard/wbp/[id]/edit` | Edit data WBP |
+| `/dashboard/wbp/tambah` | Tambah data Warga Binaan |
+| `/dashboard/wbp/[id]/edit` | Edit data Warga Binaan |
 | `/dashboard/buku-analisa` | Buku analisa proses |
 | `/dashboard/notifikasi` | Log notifikasi WhatsApp |
 | `/dashboard/laporan` | Laporan & ekspor |

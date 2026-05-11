@@ -75,7 +75,7 @@ export default function WbpAdd() {
         success: (result) => {
           qc.invalidateQueries({ queryKey: getListWbpQueryKey() });
           setTimeout(() => router.push("/dashboard/wbp"), 600);
-          return `Data WBP "${result?.data?.nama || values.nama}" berhasil ditambahkan!`;
+          return `Data Warga Binaan "${result?.data?.nama || values.nama}" berhasil ditambahkan!`;
         },
         error: (e) => `Gagal: ${e?.error?.error || "Terjadi kesalahan saat menyimpan"}`,
       }
@@ -293,7 +293,7 @@ export default function WbpAdd() {
                       <Button type="submit" disabled={createMutation.isPending}
                         className="gap-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-xl h-10 text-sm font-semibold shadow-sm shadow-teal-500/25">
                         {createMutation.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-                        Simpan Data WBP
+                        Simpan Data Warga Binaan
                       </Button>
                     </div>
                   </div>

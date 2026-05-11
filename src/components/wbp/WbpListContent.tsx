@@ -3,7 +3,7 @@
 import { PageShell } from "@/components/layout/PageShell";
 import { useListWbp, getListWbpQueryKey, useSendNotifikasi, useGetWbp, getGetWbpQueryKey } from "@/lib/api-client";
 import type { ListWbpStatus, ListWbpJenisLayanan, ListWbpTahap } from "@/lib/api-client/generated/api.schemas";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,8 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Plus, FileEdit, FileText, ChevronLeft, ChevronRight, MoreHorizontal, Eye, Send, Loader2, Users, X, RefreshCw } from "lucide-react";
+import { Search, Plus, FileEdit, FileText, ChevronLeft, ChevronRight, MoreHorizontal, Eye, Send, Loader2, Users, X, RefreshCw, Download } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { JENIS_LAYANAN_LABELS, TAHAP_LABELS, STATUS_LABELS } from "@/lib/constants";
 import { JenisLayananBadge } from "@/components/ui/jenis-layanan-badge";
 import { toast } from "sonner";
@@ -46,6 +47,7 @@ function WbpPreviewSheet({ id, open, onClose }: { id: string | null; open: boole
     query: { enabled: !!id && open, queryKey: getGetWbpQueryKey(id!) }
   });
   const sendNotif = useSendNotifikasi();
+  const qrRef = useRef<SVGSVGElement>(null);
 
   const handleSend = () => {
     if (!id) return;
@@ -59,6 +61,28 @@ function WbpPreviewSheet({ id, open, onClose }: { id: string | null; open: boole
     );
   };
 
+  const downloadQR = () => {
+    if (!qrRef.current) return;
+    const svgData = new XMLSerializer().serializeToString(qrRef.current);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = () => {
+      canvas.width = img.width + 32;
+      canvas.height = img.height + 32;
+      if (ctx) {
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 16, 16);
+      }
+      const a = document.createElement("a");
+      a.download = `SITARA-QR-${data?.data?.kodeTracking || "unknown"}.png`;
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(svgData);
+  };
+
   const wbp = data?.data;
   const currentIdx = wbp ? Object.keys(TAHAP_LABELS).indexOf(wbp.tahapSaatIni) : 0;
   const totalSteps = Object.keys(TAHAP_LABELS).length;
@@ -68,7 +92,7 @@ function WbpPreviewSheet({ id, open, onClose }: { id: string | null; open: boole
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
       <SheetContent className="sm:w-md md:w-lg p-0 flex flex-col">
         <SheetHeader className="px-6 pt-6 pb-4 border-b border-slate-100">
-          <SheetTitle className="text-base">Detail WBP</SheetTitle>
+          <SheetTitle className="text-base">Detail Warga Binaan</SheetTitle>
           <SheetDescription className="text-xs">Informasi cepat data warga binaan</SheetDescription>
         </SheetHeader>
 
@@ -148,6 +172,36 @@ function WbpPreviewSheet({ id, open, onClose }: { id: string | null; open: boole
                     <div className="bg-slate-50 rounded-xl p-3 border border-slate-100">
                       <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Perkara / Tindak Pidana</p>
                       <p className="text-xs text-slate-700 font-semibold leading-snug">{wbp.perkara}</p>
+                    </div>
+                  </>
+                )}
+
+                {/* QR Code Tracking */}
+                {wbp.kodeTracking && (
+                  <>
+                    <Separator />
+                    <div className="bg-teal-50 rounded-xl p-4 border border-teal-100">
+                      <p className="text-[10px] sm:text-xs font-bold text-teal-600 uppercase tracking-wider mb-3 text-center">QR Code Tracking</p>
+                      <div className="flex justify-center mb-3">
+                        <div className="p-2.5 bg-white rounded-xl shadow-sm border border-teal-100">
+                          <QRCodeSVG
+                            value={`${typeof window !== "undefined" ? window.location.origin : ""}/tracking/${wbp.kodeTracking}`}
+                            size={120}
+                            level="H"
+                            includeMargin={false}
+                            ref={qrRef}
+                          />
+                        </div>
+                      </div>
+                      <p className="text-center font-mono text-xs text-teal-700 font-bold mb-3">{wbp.kodeTracking}</p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full gap-2 text-xs border-teal-200 text-teal-700 hover:bg-teal-100 rounded-lg h-8"
+                        onClick={downloadQR}
+                      >
+                        <Download className="h-3 w-3" /> Download QR
+                      </Button>
                     </div>
                   </>
                 )}
@@ -295,7 +349,7 @@ export default function WbpList() {
             </Tooltip>
             <Link href="/dashboard/wbp/tambah">
               <Button className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white gap-2 shadow-sm shadow-teal-500/20 rounded-xl font-semibold">
-                <Plus className="h-4 w-4" /> Tambah WBP
+                <Plus className="h-4 w-4" /> Tambah Warga Binaan
               </Button>
             </Link>
           </div>
