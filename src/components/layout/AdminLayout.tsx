@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { useGetMe, useAdminLogout } from "@/lib/api-client";
 import Link from "next/link";
