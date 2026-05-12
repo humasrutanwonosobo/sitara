@@ -190,12 +190,42 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex items-center gap-2">
-          <Link href="/dashboard/notifikasi">
-            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-white/[0.06] relative h-8 w-8 rounded-lg">
-              <Bell className="h-4 w-4" />
-              <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-rose-500" />
-            </Button>
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white hover:bg-white/[0.06] relative h-8 w-8 rounded-lg outline-none focus-visible:ring-1 focus-visible:ring-white/20">
+                <Bell className="h-4 w-4" />
+                <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80 p-0 bg-[#0f172a] border-white/[0.08] shadow-2xl rounded-2xl overflow-hidden mt-2">
+              <div className="p-4 border-b border-white/[0.06] bg-white/[0.02]">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-white">Notifikasi Terbaru</h3>
+                  <span className="text-[10px] bg-teal-500/20 text-teal-400 px-2 py-0.5 rounded-full font-bold">2 Baru</span>
+                </div>
+              </div>
+              <div className="max-h-[300px] overflow-y-auto">
+                <div className="p-2 space-y-1">
+                  {[
+                    { title: "Status PB Berubah", desc: "WBP Budi Santoso statusnya berubah ke Sidang TPP", time: "5 mnt lalu", type: "success" },
+                    { title: "Gagal Kirim WA", desc: "Notifikasi ke keluarga WBP Andi gagal dikirim", time: "1 jm lalu", type: "error" },
+                    { title: "Laporan Mingguan", desc: "Laporan mingguan otomatis telah digenerate", time: "3 jm lalu", type: "info" },
+                  ].map((n, i) => (
+                    <DropdownMenuItem key={i} className="flex flex-col items-start gap-1 p-3 rounded-xl focus:bg-white/[0.04] cursor-pointer">
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-xs font-bold text-slate-200">{n.title}</span>
+                        <span className="text-[10px] text-slate-500">{n.time}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 leading-snug">{n.desc}</p>
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              </div>
+              <Link href="/dashboard/notifikasi" className="block p-3 text-center text-xs font-bold text-teal-400 hover:bg-white/[0.04] border-t border-white/[0.06] transition-colors">
+                Lihat Semua Notifikasi
+              </Link>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <div className="w-px h-5 bg-white/[0.08] mx-1" />
 
