@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { Loader2, Lock, Mail, ArrowRight, ShieldAlert } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
@@ -21,7 +21,6 @@ const loginSchema = z.object({
 
 export default function Login() {
   const router = useRouter();
-  const { toast } = useToast();
   const { data: user, isLoading: isCheckingAuth } = useGetMe();
   const loginMutation = useAdminLogin();
 
@@ -37,15 +36,12 @@ export default function Login() {
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     loginMutation.mutate({ data: values }, {
       onSuccess: () => {
-        toast({ title: "Selamat datang", description: "Berhasil masuk ke Portal SITARA." });
+        toast.success("Berhasil Masuk", { description: "Selamat datang kembali di Portal SITARA." });
         router.push("/dashboard");
       },
       onError: (error) => {
-        toast({
-          variant: "destructive",
-          title: "Login Gagal",
-          description: (error as { error?: { error?: string } }).error?.error || "Periksa email dan password Anda.",
-        });
+        const errorMsg = (error as { error?: { error?: string } }).error?.error || "Periksa email dan password Anda.";
+        toast.error("Login Gagal", { description: errorMsg });
       },
     });
   };

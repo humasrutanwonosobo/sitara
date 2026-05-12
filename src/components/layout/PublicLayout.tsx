@@ -3,11 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUp, Coffee, LayoutDashboard } from "lucide-react";
+import { ArrowUp, Coffee, LayoutDashboard, Menu, X, ChevronRight, Home, Search, BookOpen, Info, Phone } from "lucide-react";
 import { useGetMe } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
   const [showTop, setShowTop] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: user } = useGetMe();
 
   useEffect(() => {
@@ -18,34 +21,98 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-[#080c14]">
-      <header className="sticky top-0 z-30 bg-[#080c14]/60 backdrop-blur-2xl">
+      <header className="sticky top-0 z-30 bg-[#080c14]/60 backdrop-blur-2xl transform-gpu">
         <div className="max-w-6xl mx-auto px-5">
           <div className="h-16 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3 group">
               <Image src="/logo.png" alt="SITARA Logo" width={34} height={34} className="rounded-xl ring-1 ring-white/[0.08] group-hover:ring-teal-500/40 transition-all" />
-              <div className="flex flex-col">
+              <div className="hidden sm:flex flex-col">
                 <span className="font-extrabold text-white text-sm tracking-[0.2em] leading-none">SITARA</span>
-                <span className="hidden sm:block text-[10px] text-white/30 font-medium mt-0.5">Rutan Wonosobo</span>
+                <span className="text-[10px] text-white/30 font-medium mt-0.5">Rutan Wonosobo</span>
               </div>
             </Link>
 
             <nav className="flex items-center gap-1 sm:gap-2">
-              <Link href="/tracking" className="text-sm font-medium text-white/50 hover:text-white transition-colors px-3 sm:px-4 py-2 rounded-xl hover:bg-white/[0.06]">
+              <Link href="/tracking" className="hidden sm:block text-sm font-medium text-white/50 hover:text-white transition-colors px-3 sm:px-4 py-2 rounded-xl hover:bg-white/[0.06]">
                 Cek Status
               </Link>
               <Link href="/panduan" className="hidden sm:block text-sm font-medium text-white/50 hover:text-white transition-colors px-4 py-2 rounded-xl hover:bg-white/[0.06]">
                 Panduan
               </Link>
               {user ? (
-                <Link href="/dashboard" className="text-xs font-bold bg-teal-500 hover:bg-teal-400 border border-teal-500 text-white px-4 py-2 rounded-xl transition-all duration-200 flex items-center gap-1.5">
+                <Link href="/dashboard" className="hidden sm:flex text-xs font-bold bg-teal-500 hover:bg-teal-400 border border-teal-500 text-white px-4 py-2 rounded-xl transition-all duration-200 items-center gap-1.5">
                   <LayoutDashboard className="h-3.5 w-3.5" />
                   Dashboard
                 </Link>
               ) : (
-                <Link href="/login" className="text-xs font-bold bg-white/[0.08] hover:bg-teal-500 border border-white/[0.1] hover:border-teal-500 text-white/80 hover:text-white px-4 py-2 rounded-xl transition-all duration-200">
+                <Link href="/login" className="hidden sm:block text-xs font-bold bg-white/[0.08] hover:bg-teal-500 border border-white/[0.1] hover:border-teal-500 text-white/80 hover:text-white px-4 py-2 rounded-xl transition-all duration-200">
                   Login
                 </Link>
               )}
+
+              {/* Mobile Menu Trigger */}
+              <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="sm:hidden text-white/50 hover:text-white hover:bg-white/[0.06] h-10 w-10">
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Menu Utama</span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px] bg-[#080c14] border-white/[0.08] p-0 flex flex-col">
+                  <SheetHeader className="p-6 border-b border-white/[0.08] flex-row items-center justify-between space-y-0">
+                    <div className="flex items-center gap-3">
+                      <Image src="/logo.png" alt="SITARA" width={28} height={28} className="rounded-lg" />
+                      <SheetTitle className="text-white text-sm tracking-[0.2em] font-extrabold">SITARA</SheetTitle>
+                    </div>
+                  </SheetHeader>
+                  
+                  <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
+                    {[
+                      { href: "/", label: "Beranda", icon: Home },
+                      { href: "/tracking", label: "Cek Status", icon: Search },
+                      { href: "/panduan", label: "Panduan", icon: BookOpen },
+                      { href: "/tentang", label: "Tentang", icon: Info },
+                      { href: "/kontak", label: "Kontak", icon: Phone },
+                    ].map((item) => (
+                      <Link 
+                        key={item.href} 
+                        href={item.href}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.05] hover:border-white/[0.08] transition-all group"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-500 group-hover:scale-110 transition-transform">
+                            <item.icon className="h-4 w-4" />
+                          </div>
+                          <span className="text-sm font-semibold text-white/70 group-hover:text-white transition-colors">{item.label}</span>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-white/20 group-hover:text-white/40 transition-all group-hover:translate-x-1" />
+                      </Link>
+                    ))}
+                  </div>
+
+                  <div className="p-6 border-t border-white/[0.08] bg-white/[0.02]">
+                    {user ? (
+                      <Link 
+                        href="/dashboard"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="w-full flex items-center justify-center gap-2 bg-teal-500 hover:bg-teal-400 text-white font-bold py-3.5 rounded-2xl transition-all"
+                      >
+                        <LayoutDashboard className="h-4 w-4" />
+                        Ke Dashboard
+                      </Link>
+                    ) : (
+                      <Link 
+                        href="/login"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="w-full flex items-center justify-center gap-2 bg-white/[0.08] hover:bg-white/[0.12] text-white font-bold py-3.5 rounded-2xl border border-white/[0.08] transition-all"
+                      >
+                        Login Petugas
+                      </Link>
+                    )}
+                  </div>
+                </SheetContent>
+              </Sheet>
             </nav>
           </div>
           {/* Bottom border glow */}

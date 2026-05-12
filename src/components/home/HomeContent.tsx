@@ -72,9 +72,9 @@ export default function Home() {
         />
 
         {/* Glow orbs */}
-        <div className="pointer-events-none absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-80 md:h-[500px] rounded-full bg-teal-500/10 blur-[120px]" />
-        <div className="pointer-events-none absolute bottom-0 right-[-5%] w-[400px] h-[400px] rounded-full bg-emerald-600/8 blur-[100px]" />
-        <div className="pointer-events-none absolute top-[20%] left-[-8%] w-[300px] h-64 md:h-[300px] rounded-full bg-blue-600/8 blur-[80px]" />
+        <div className="pointer-events-none absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-80 md:h-[500px] rounded-full bg-teal-500/10 blur-[120px] transform-gpu will-change-transform" />
+        <div className="pointer-events-none absolute bottom-0 right-[-5%] w-[400px] h-[400px] rounded-full bg-emerald-600/8 blur-[100px] transform-gpu will-change-transform" />
+        <div className="pointer-events-none absolute top-[20%] left-[-8%] w-[300px] h-64 md:h-[300px] rounded-full bg-blue-600/8 blur-[80px] transform-gpu will-change-transform" />
 
         {/* Main content */}
         <div className="relative w-full max-w-2xl lg:max-w-4xl mx-auto text-center">
@@ -334,11 +334,11 @@ export default function Home() {
             </AnimateOnScroll>
 
             {/* Right: CTA card */}
-            <AnimateOnScroll animation="animate-in fade-in slide-in-from-right-6 zoom-in-95 duration-700" delay={200}>
-              <div className="relative">
-                <div className="absolute inset-0 bg-teal-500/5 rounded-3xl blur-3xl" />
-                <div className="relative bg-gradient-to-br from-teal-900/30 to-emerald-900/20 border border-teal-500/20 rounded-3xl p-10 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-teal-500/30">
+            <AnimateOnScroll animation="animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out" delay={200}>
+              <div className="relative transform-gpu">
+                <div className="absolute inset-0 bg-teal-500/10 rounded-3xl blur-2xl transform-gpu will-change-transform" />
+                <div className="relative bg-gradient-to-br from-teal-900/40 to-emerald-900/30 border border-teal-500/20 rounded-3xl p-8 sm:p-10 text-center transform-gpu will-change-transform shadow-2xl shadow-black/20">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-teal-500/30 transform-gpu">
                     <Clock className="h-7 w-7 text-white" />
                   </div>
                   <h3 className="text-2xl font-black text-white mb-3">Cek Sekarang</h3>

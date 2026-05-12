@@ -16,7 +16,7 @@ export function AnimateOnScroll({
   className = "",
   animation = "animate-in fade-in slide-in-from-bottom-4 duration-700",
   delay = 0,
-  threshold = 0.1,
+  threshold = 0.05,
   once = true,
 }: AnimateOnScrollProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -43,7 +43,7 @@ export function AnimateOnScroll({
   return (
     <div
       ref={ref}
-      className={`${isVisible ? animation : "opacity-0"} ${className}`}
+      className={`transition-opacity duration-300 ${isVisible ? animation : "opacity-0"} ${className} transform-gpu will-change-[opacity,transform]`}
       style={{ animationDelay: `${delay}ms`, animationFillMode: "both" }}
     >
       {children}
