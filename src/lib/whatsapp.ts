@@ -95,21 +95,44 @@ export function buatPesan(
   namaWargaBinaan: string,
   jenisLayanan: string,
   tahap: string,
-  trackingUrl: string
+  trackingUrl: string,
+  namaKontakKeluarga?: string
 ): string {
+  // Format tanggal dalam Bahasa Indonesia
+  const now = new Date();
+  const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+  const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+  const dayName = days[now.getDay()];
+  const date = now.getDate();
+  const monthName = months[now.getMonth()];
+  const year = now.getFullYear();
+  const formattedDate = `${dayName}, ${date} ${monthName} ${year}`;
+
+  // Personalisasi sapaan
+  const greeting = namaKontakKeluarga 
+    ? `Yth. Bapak/Ibu *${namaKontakKeluarga}*`
+    : 'Yth. Keluarga Warga Binaan';
+
   return `*SITARA - Update Status Reintegrasi*
 
 Assalamu'alaikum wr. wb.
 
-Status proses reintegrasi atas nama *${namaWargaBinaan}* telah diperbarui.
+${greeting},
 
-Jenis Layanan: ${JENIS_LAYANAN_LABEL[jenisLayanan] ?? jenisLayanan}
-Tahap Terbaru: ${TAHAP_LABEL[tahap] ?? tahap}
+Dengan hormat kami sampaikan bahwa status proses reintegrasi atas nama *${namaWargaBinaan}* telah diperbarui pada *${formattedDate}*.
 
-Pantau status lengkap melalui tautan berikut:
+📋 *Detail Informasi:*
+• Jenis Layanan: *${JENIS_LAYANAN_LABEL[jenisLayanan] ?? jenisLayanan}*
+• Tahap Terbaru: *${TAHAP_LABEL[tahap] ?? tahap}*
+
+🔗 *Pantau Status Lengkap:*
+Klik tautan berikut untuk melihat detail proses:
 ${trackingUrl}
 
-Terima kasih atas kepercayaan Anda.
+Terima kasih atas perhatian dan kepercayaan Anda.
 
-_Sistem Informasi Tracking Reintegrasi Warga Binaan (SITARA)_`;
+Wassalamu'alaikum wr. wb.
+
+_Sistem Informasi Tracking Reintegrasi Warga Binaan (SITARA)_
+_Rumah Tahanan Negara Kelas IIB Wonosobo_`;
 }

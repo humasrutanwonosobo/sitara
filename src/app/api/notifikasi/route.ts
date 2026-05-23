@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     const target = nomorTujuan || wbps[0].nomorHpKeluarga;
     if (!target) return NextResponse.json({ error: "Nomor HP keluarga belum diisi" }, { status: 400 });
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
-    const message = pesan ?? buatPesan(wbps[0].nama, wbps[0].jenisLayanan, wbps[0].tahapSaatIni, `${baseUrl}/tracking/${wbps[0].kodeTracking}`);
+    const message = pesan ?? buatPesan(wbps[0].nama, wbps[0].jenisLayanan, wbps[0].tahapSaatIni, `${baseUrl}/tracking/${wbps[0].kodeTracking}`, wbps[0].namaKontakKeluarga ?? undefined);
     const result = await kirimWhatsApp({ target, message });
     await db.insert(logNotifikasiTable).values({
       wbpId, nomorHp: target, pesan: message, statusKirim: result.status ? "terkirim" : "gagal",
