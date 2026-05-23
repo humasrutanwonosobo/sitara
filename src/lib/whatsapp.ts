@@ -41,7 +41,37 @@ export async function kirimWhatsApp(payload: WAPayload): Promise<WAResponse> {
       }),
     });
 
-    return (await response.json()) as WAResponse;
+    // Validasi HTTP status code
+    if (!response.ok) {
+      return {
+        status: false,
+        reason: `HTTP ${response.status}: ${response.statusText}`,
+      };
+    }
+
+    const data = (await response.json()) as WAResponse;
+
+    // Validasi field detail untuk mendeteksi error dari Fonnte
+    // Fonnte sering mengembalikan { status: true, detail: "invalid number" }
+    if (data.detail) {
+      const detailLower = data.detail.toLowerCase();
+      // Deteksi berbagai jenis error dari Fonnte
+      if (
+        detailLower.includes("invalid") ||
+        detailLower.includes("not found") ||
+        detailLower.includes("failed") ||
+        detailLower.includes("error") ||
+        detailLower.includes("tidak valid") ||
+        detailLower.includes("gagal")
+      ) {
+        return {
+          status: false,
+          reason: data.detail,
+        };
+      }
+    }
+
+    return data;
   } catch (err) {
     return { status: false, reason: String(err) };
   }
