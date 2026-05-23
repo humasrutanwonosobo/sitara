@@ -52,6 +52,12 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   } catch { return NextResponse.json({ error: "Internal server error" }, { status: 500 }); }
 }
 
+// PUT handler as alias for PATCH (for compatibility with generated API client)
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  return PATCH(request, { params });
+}
+
+
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await requireRole("super_admin", "admin");
