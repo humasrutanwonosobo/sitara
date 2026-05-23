@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useGetMe, useAdminLogout } from "@/lib/api-client";
+import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -126,12 +127,18 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const logout = useAdminLogout();
+  const queryClient = useQueryClient();
 
   const handleLogout = () => {
     logout.mutate(undefined, { 
       onSuccess: () => {
+        // Invalidate all queries to clear cached data
+        queryClient.clear();
         toast.success("Berhasil Keluar", { description: "Anda telah keluar dari sesi admin." });
         router.push("/login");
+      },
+      onError: () => {
+        toast.error("Gagal Keluar", { description: "Terjadi kesalahan saat logout. Silakan coba lagi." });
       }
     });
   };
