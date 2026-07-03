@@ -5,52 +5,33 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { AnimateOnScroll } from "@/components/ui/animate-on-scroll";
+import type { FeatureItem, LayananItem, TahapanItem } from "@/lib/static";
 import {
   KeyRound, ArrowRight, ShieldCheck, Zap, FileCheck2,
   MessageSquare, CheckCircle2, ChevronRight, Clock,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 
-type LayananItem = { id: string; code: string; label: string; desc: string; color: string; glow: string; dot: string };
-type TahapanItem = { id: string; num: string; title: string; sub: string; desc: string };
-type FeatureItem = { id: string; section: string; data: Record<string, string> };
+type SiteConfig = Record<string, unknown>;
+
+type HomeContentProps = {
+  layanan: LayananItem[];
+  tahapan: TahapanItem[];
+  keunggulan: FeatureItem[];
+  howTo: FeatureItem[];
+  siteConfig: SiteConfig;
+};
 
 const ICON_MAP: Record<string, React.ElementType> = {
   FileCheck2, Zap, MessageSquare, ShieldCheck,
 };
 
-export default function Home() {
+export default function Home({ layanan, tahapan, keunggulan, howTo, siteConfig }: HomeContentProps) {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [focused, setFocused] = useState(false);
 
-  const { data: layanan } = useQuery<LayananItem[]>({
-    queryKey: ["pengaturan-layanan"],
-    queryFn: () => fetch("/api/pengaturan/layanan").then((r) => { if (!r.ok) throw new Error(); return r.json(); }),
-  });
-
-  const { data: tahapan } = useQuery<TahapanItem[]>({
-    queryKey: ["pengaturan-tahapan"],
-    queryFn: () => fetch("/api/pengaturan/tahapan").then((r) => { if (!r.ok) throw new Error(); return r.json(); }),
-  });
-
-  const { data: keunggulan } = useQuery<FeatureItem[]>({
-    queryKey: ["pengaturan-features", "keunggulan"],
-    queryFn: () => fetch("/api/pengaturan/features?section=keunggulan").then((r) => { if (!r.ok) throw new Error(); return r.json(); }),
-  });
-
-  const { data: howTo } = useQuery<FeatureItem[]>({
-    queryKey: ["pengaturan-features", "how_to"],
-    queryFn: () => fetch("/api/pengaturan/features?section=how_to").then((r) => { if (!r.ok) throw new Error(); return r.json(); }),
-  });
-
-  const { data: siteConfig } = useQuery<Record<string, unknown>>({
-    queryKey: ["pengaturan-site-config"],
-    queryFn: () => fetch("/api/pengaturan/site-config").then((r) => { if (!r.ok) throw new Error(); return r.json(); }),
-  });
-
-  const featurePills: { icon: string; label: string }[] = (siteConfig?.feature_pills as { icon: string; label: string }[]) || [];
-  const heroSubtitle = (siteConfig?.hero_subtitle as string) || "Cek proses Pembebasan Bersyarat, Cuti Bersyarat, dan Cuti Menjelang Bebas secara langsung — tanpa perlu ke kantor.";
+  const featurePills: { icon: string; label: string }[] = (siteConfig.feature_pills as { icon: string; label: string }[]) || [];
+  const heroSubtitle = (siteConfig.hero_subtitle as string) || "Cek proses Pembebasan Bersyarat, Cuti Bersyarat, dan Cuti Menjelang Bebas secara langsung — tanpa perlu ke kantor.";
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

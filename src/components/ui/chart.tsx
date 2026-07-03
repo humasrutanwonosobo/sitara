@@ -168,8 +168,10 @@ const ChartTooltipContent = React.forwardRef<
       if (labelFormatter) {
         return (
           <div className={cn("font-medium", labelClassName)}>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {labelFormatter(value, payload as any[])}
+            {labelFormatter(
+              value,
+              payload as unknown as Parameters<NonNullable<typeof labelFormatter>>[1]
+            )}
           </div>
         )
       }
@@ -223,8 +225,13 @@ const ChartTooltipContent = React.forwardRef<
                   )}
                 >
                   {formatter && item?.value !== undefined && item.name ? (
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    formatter(item.value as any, item.name as any, item as any, index, item.payload as any)
+                    formatter(
+                      item.value as Parameters<NonNullable<typeof formatter>>[0],
+                      item.name as Parameters<NonNullable<typeof formatter>>[1],
+                      item as unknown as Parameters<NonNullable<typeof formatter>>[2],
+                      index,
+                      item.payload as unknown as Parameters<NonNullable<typeof formatter>>[4]
+                    )
                   ) : (
                     <>
                       {itemConfig?.icon ? (

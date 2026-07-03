@@ -18,6 +18,7 @@ import {
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import type { AdminUser } from "@/lib/api-client/generated/api.schemas";
 
 const NAV_MAIN = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -58,7 +59,7 @@ function SidebarContent({
   onNavItemClick 
 }: { 
   isActive: (href: string) => boolean; 
-  user: any; 
+  user: AdminUser | undefined; 
   initials: string;
   onNavItemClick?: () => void;
 }) {

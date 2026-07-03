@@ -116,7 +116,7 @@ export const insertTahapanSchema = createInsertSchema(tahapanTable, {
 
 export const insertFeaturesSchema = createInsertSchema(featuresTable, {
   section: z.string().min(1),
-  data: z.any(),
+  data: z.unknown(),
   sortOrder: z.number().int().optional(),
   isActive: z.boolean().optional(),
 }).omit({ id: true, updatedAt: true });

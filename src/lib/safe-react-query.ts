@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
   useQuery as useQueryOriginal,
@@ -20,16 +19,16 @@ import type {
 // Simple re-exports — no SSR workaround needed since all consumers are client components
 // wrapped in QueryClientProvider via Providers.
 
-function useQuery<TQueryFnData, TError, TData>(
-  options: UseQueryOptions<TQueryFnData, TError, TData>
+function useQuery<TQueryFnData, TError, TData, TQueryKey extends QueryKey = QueryKey>(
+  options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
 ): UseQueryResult<TData, TError> {
-  return useQueryOriginal(options) as any;
+  return useQueryOriginal(options);
 }
 
 function useMutation<TData, TError, TVariables, TContext>(
   options?: UseMutationOptions<TData, TError, TVariables, TContext>
 ): UseMutationResult<TData, TError, TVariables, TContext> {
-  return useMutationOriginal(options as any) as any;
+  return useMutationOriginal(options ?? {});
 }
 
 function useQueryClient(): QueryClientType {

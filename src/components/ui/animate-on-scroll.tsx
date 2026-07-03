@@ -26,6 +26,11 @@ export function AnimateOnScroll({
     const el = ref.current;
     if (!el) return;
 
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -33,7 +38,7 @@ export function AnimateOnScroll({
           if (once) observer.unobserve(el);
         }
       },
-      { threshold }
+      { threshold, rootMargin: "80px 0px" }
     );
 
     observer.observe(el);
@@ -43,7 +48,7 @@ export function AnimateOnScroll({
   return (
     <div
       ref={ref}
-      className={`transition-opacity duration-300 ${isVisible ? animation : "opacity-0"} ${className} transform-gpu will-change-[opacity,transform]`}
+      className={`transition-opacity duration-300 ${isVisible ? animation : "opacity-0 will-change-[opacity,transform]"} ${className} transform-gpu`}
       style={{ animationDelay: `${delay}ms`, animationFillMode: "both" }}
     >
       {children}

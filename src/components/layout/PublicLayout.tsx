@@ -3,15 +3,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUp, Coffee, LayoutDashboard, Menu, X, ChevronRight, Home, Search, BookOpen, Info, Phone } from "lucide-react";
-import { useGetMe } from "@/lib/api-client";
+import { ArrowUp, Coffee, Menu, ChevronRight, Home, Search, BookOpen, Info, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
   const [showTop, setShowTop] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { data: user } = useGetMe();
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 400);
@@ -39,16 +37,9 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
               <Link href="/panduan" className="hidden sm:block text-sm font-medium text-white/50 hover:text-white transition-colors px-4 py-2 rounded-xl hover:bg-white/[0.06]">
                 Panduan
               </Link>
-              {user ? (
-                <Link href="/dashboard" className="hidden sm:flex text-xs font-bold bg-teal-500 hover:bg-teal-400 border border-teal-500 text-white px-4 py-2 rounded-xl transition-all duration-200 items-center gap-1.5">
-                  <LayoutDashboard className="h-3.5 w-3.5" />
-                  Dashboard
-                </Link>
-              ) : (
-                <Link href="/login" className="hidden sm:block text-xs font-bold bg-white/[0.08] hover:bg-teal-500 border border-white/[0.1] hover:border-teal-500 text-white/80 hover:text-white px-4 py-2 rounded-xl transition-all duration-200">
-                  Login
-                </Link>
-              )}
+              <Link href="/login" className="hidden sm:block text-xs font-bold bg-white/[0.08] hover:bg-teal-500 border border-white/[0.1] hover:border-teal-500 text-white/80 hover:text-white px-4 py-2 rounded-xl transition-all duration-200">
+                Login
+              </Link>
 
               {/* Mobile Menu Trigger */}
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
@@ -92,24 +83,13 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
                   </div>
 
                   <div className="p-6 border-t border-white/[0.08] bg-white/[0.02]">
-                    {user ? (
-                      <Link 
-                        href="/dashboard"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="w-full flex items-center justify-center gap-2 bg-teal-500 hover:bg-teal-400 text-white font-bold py-3.5 rounded-2xl transition-all"
-                      >
-                        <LayoutDashboard className="h-4 w-4" />
-                        Ke Dashboard
-                      </Link>
-                    ) : (
-                      <Link 
-                        href="/login"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="w-full flex items-center justify-center gap-2 bg-white/[0.08] hover:bg-white/[0.12] text-white font-bold py-3.5 rounded-2xl border border-white/[0.08] transition-all"
-                      >
-                        Login Petugas
-                      </Link>
-                    )}
+                    <Link 
+                      href="/login"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="w-full flex items-center justify-center gap-2 bg-white/[0.08] hover:bg-white/[0.12] text-white font-bold py-3.5 rounded-2xl border border-white/[0.08] transition-all"
+                    >
+                      Login Petugas
+                    </Link>
                   </div>
                 </SheetContent>
               </Sheet>

@@ -1,8 +1,15 @@
 import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import { Providers } from "./providers";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://sitara.vercel.app";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--app-font-sans",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -108,14 +115,8 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="id">
+    <html lang="id" className={inter.variable}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-          rel="stylesheet"
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
