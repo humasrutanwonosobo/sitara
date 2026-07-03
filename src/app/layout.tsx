@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
+import { ReloadScrollReset } from "@/components/system/ReloadScrollReset";
 import "./globals.css";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://sitara.vercel.app";
@@ -123,6 +124,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <ReloadScrollReset />
         <Providers>{children}</Providers>
       </body>
     </html>

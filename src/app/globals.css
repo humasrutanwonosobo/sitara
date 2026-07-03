@@ -235,6 +235,123 @@
   animation: fade-in 0.5s ease-out forwards;
 }
 
+@keyframes brand-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes brand-progress {
+  0% { transform: translateX(-100%); }
+  55%, 100% { transform: translateX(100%); }
+}
+
+.brand-loading-screen {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  overflow: hidden;
+  color: white;
+  background:
+    radial-gradient(circle at 50% 28%, hsl(170 72% 42% / 0.25), transparent 30rem),
+    linear-gradient(145deg, #050814 0%, #07111f 48%, #041316 100%);
+}
+
+.brand-loading-card {
+  width: min(100%, 22rem);
+  display: grid;
+  justify-items: center;
+  gap: 1.15rem;
+  padding: 1.5rem;
+  border: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 1.75rem;
+  background: rgb(255 255 255 / 0.06);
+  box-shadow: 0 1.5rem 5rem rgb(0 0 0 / 0.35);
+  backdrop-filter: blur(18px);
+}
+
+.brand-loading-mark {
+  position: relative;
+  width: 4.25rem;
+  height: 4.25rem;
+  display: grid;
+  place-items: center;
+}
+
+.brand-loading-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: conic-gradient(from 90deg, transparent 0 22%, #2dd4bf 38%, #34d399 58%, transparent 75% 100%);
+  animation: brand-orbit 1s linear infinite;
+}
+
+.brand-loading-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0.22rem;
+  border-radius: inherit;
+  background: #07111f;
+}
+
+.brand-loading-core {
+  position: relative;
+  z-index: 1;
+  width: 3.15rem;
+  height: 3.15rem;
+  display: grid;
+  place-items: center;
+  border-radius: 1rem;
+  color: white;
+  font-size: 1.45rem;
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  background: linear-gradient(135deg, #14b8a6, #10b981);
+  box-shadow: 0 0.85rem 2.25rem rgb(20 184 166 / 0.36);
+}
+
+.brand-loading-copy {
+  text-align: center;
+}
+
+.brand-loading-eyebrow {
+  margin: 0 0 0.2rem;
+  color: #5eead4;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+}
+
+.brand-loading-copy h1 {
+  margin: 0;
+  font-size: clamp(1.1rem, 4vw, 1.45rem);
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+}
+
+.brand-loading-copy p:last-child {
+  margin: 0.45rem 0 0;
+  color: rgb(255 255 255 / 0.62);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.brand-loading-bar {
+  width: 100%;
+  height: 0.28rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.08);
+}
+
+.brand-loading-bar span {
+  display: block;
+  width: 58%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, transparent, #2dd4bf, #34d399, transparent);
+  animation: brand-progress 1.2s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -243,5 +360,10 @@
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .brand-loading-ring,
+  .brand-loading-bar span {
+    animation: none !important;
   }
 }
