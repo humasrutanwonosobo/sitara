@@ -211,6 +211,52 @@
   }
 }
 
+@layer utilities {
+  .transform-gpu {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  .will-change-transform {
+    will-change: transform;
+    contain: layout style paint;
+  }
+
+  .will-change-opacity {
+    will-change: opacity;
+    contain: layout style paint;
+  }
+
+  .gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    filter: blur(0);
+  }
+
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    scroll-padding-top: 2rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hardware-overlay {
+    transform: translateZ(0);
+    position: relative;
+  }
+
+  .animation-performance {
+    contain: layout style paint;
+    content-visibility: auto;
+  }
+
+  .layout-stability {
+    contain: layout;
+    content-visibility: auto;
+  }
+}
+
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(200%); }

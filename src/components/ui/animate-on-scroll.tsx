@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 interface AnimateOnScrollProps {
@@ -11,6 +12,23 @@ interface AnimateOnScrollProps {
   once?: boolean;
 }
 
+const tailwindToVariants: Record<string, Variants> = {
+  "fade-in": { hidden: { opacity: 0 }, visible: { opacity: 1 } },
+  "slide-in-from-bottom-4": { hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } },
+  "slide-in-from-bottom-3": { hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } },
+  "slide-in-from-bottom-5": { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } },
+  "slide-in-from-bottom-8": { hidden: { opacity: 0, y: 32 }, visible: { opacity: 1, y: 0 } },
+  "slide-in-from-left-6": { hidden: { opacity: 0, x: -24 }, visible: { opacity: 1, x: 0 } },
+  "zoom-in-95": { hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } },
+};
+
+const springTransition = {
+  type: "spring" as const,
+  stiffness: 260,
+  damping: 20,
+  mass: 0.5,
+};
+
 export function AnimateOnScroll({
   children,
   className = "",
@@ -21,12 +39,13 @@ export function AnimateOnScroll({
 }: AnimateOnScrollProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (shouldReduceMotion || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setIsVisible(true);
       return;
     }
@@ -43,15 +62,50 @@ export function AnimateOnScroll({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [threshold, once]);
+  }, [threshold, once, shouldReduceMotion]);
+
+  const animationClass = animation.split(" ").find((cls) =>
+    cls.startsWith("fade-in") ||
+    cls.startsWith("slide-in-from-") ||
+    cls.startsWith("zoom-in-")
+  ) || "fade-in";
+
+  const durationMatch = animation.match(/duration-(\d+)/);
+  const duration = durationMatch ? parseInt(durationMatch[1]) / 1000 : 0.7;
+
+  const delayMatch = animation.match(/delay-(\d+)/);
+  const animationDelay = delayMatch ? parseInt(delayMatch[1]) / 1000 : delay / 1000;
+
+  const baseVariant = tailwindToVariants[animationClass] || tailwindToVariants["fade-in"];
+
+  if (shouldReduceMotion) {
+    return (
+      <div ref={ref} className={className}>
+        {children}
+      </div>
+    );
+  }
 
   return (
-    <div
+    <motion.div
       ref={ref}
-      className={`transition-opacity duration-300 ${isVisible ? animation : "opacity-0 will-change-[opacity,transform]"} ${className} transform-gpu`}
-      style={{ animationDelay: `${delay}ms`, animationFillMode: "both" }}
+      className={className}
+      initial="hidden"
+      animate={isVisible ? "visible" : "hidden"}
+      variants={{
+        ...baseVariant,
+        visible: {
+          ...baseVariant.visible,
+          transition: {
+            ...springTransition,
+            delay: animationDelay,
+            duration,
+          },
+        },
+      }}
+      style={{ transform: "translateZ(0)", willChange: "transform, opacity" }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }
