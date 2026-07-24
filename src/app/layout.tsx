@@ -115,12 +115,32 @@ export default function RootLayout({
     },
   };
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "SITARA",
+    url: SITE_URL,
+    inLanguage: "id-ID",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE_URL}/tracking?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <html lang="id" className={inter.variable}>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
       <body>

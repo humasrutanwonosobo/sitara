@@ -35,9 +35,23 @@ const faqs = [
   { q: "Apakah ada biaya?", a: "Tidak. Seluruh layanan SITARA dan proses reintegrasi tidak dipungut biaya apapun." },
 ];
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
+};
+
 export default function PanduanPage() {
   return (
     <div className="relative min-h-[calc(100dvh-64px)] bg-[#080c14] overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* Background */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.02]"
