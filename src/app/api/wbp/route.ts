@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, wbpTable, riwayatStatusTable, insertWbpSchema } from "@/lib/db";
 import { eq, ilike, or, and, desc, count } from "drizzle-orm";
-import { requireAuth } from "@/lib/auth/session";
+import { requireAuth, requireRole } from "@/lib/auth/session";
 import { sanitizeWbpData } from "@/lib/utils/sanitize-wbp";
 import { generateKodeTracking, mapWbp } from "@/lib/utils/wbp-helpers";
 
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await requireAuth();
+    await requireRole("super_admin", "admin", "operator");
     const parsed = insertWbpSchema.safeParse(await request.json());
     if (!parsed.success) return NextResponse.json({ error: parsed.error.message }, { status: 400 });
     const sanitized = sanitizeWbpData(parsed.data);

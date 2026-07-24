@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { useQueryClient } from "@/lib/safe-react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import type { WbpItem } from "@/lib/api-client/generated/api.schemas";
 import { toast } from "sonner";
 

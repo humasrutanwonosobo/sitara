@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { db, profileTable } from "@/lib/db";
 import { eq } from "drizzle-orm";
 
@@ -10,12 +10,11 @@ export interface UserSession {
 }
 
 export async function getSession(): Promise<UserSession | null> {
-  const supabase = await createAdminClient();
+  const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return null;
 
-  // Fetch role from profiles table
   const [profile] = await db.select({
     name: profileTable.name,
     role: profileTable.role,

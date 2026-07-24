@@ -17,7 +17,7 @@ import {
   Send, Loader2, CheckCircle2, Clock, XCircle, Search, MessageSquare,
   X, RefreshCw, Eye, ChevronLeft, ChevronRight,
 } from "lucide-react";
-import { useQueryClient } from "@/lib/safe-react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 interface LogItem {

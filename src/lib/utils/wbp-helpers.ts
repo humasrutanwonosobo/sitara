@@ -14,7 +14,7 @@ export function generateKodeTracking(jenisLayanan: string): string {
 }
 
 /**
- * Map Warga Binaan database row ke response shape yang konsisten.
+ * Map Warga Binaan database row ke response shape yang konsisten (admin).
  */
 export function mapWbp(w: typeof wbpTable.$inferSelect) {
   return {
@@ -35,6 +35,29 @@ export function mapWbp(w: typeof wbpTable.$inferSelect) {
     status: w.status,
     catatan: w.catatan,
     createdAt: w.createdAt,
+    updatedAt: w.updatedAt,
+  };
+}
+
+/**
+ * Map Warga Binaan untuk publik (tracking publik).
+ * Hanya expose kolom yang aman untuk dilihat publik.
+ * Sembunyikan: alamat, nomorHpKeluarga, namaKontakKeluarga, perkara, catatan.
+ */
+export function mapWbpPublic(w: typeof wbpTable.$inferSelect) {
+  return {
+    id: w.id,
+    kodeTracking: w.kodeTracking,
+    nama: w.nama,
+    nomorRegistrasi: w.nomorRegistrasi,
+    jenisKelamin: w.jenisKelamin,
+    tempatLahir: w.tempatLahir,
+    tanggalLahir: w.tanggalLahir,
+    tanggalPelaksanaan: w.tanggalPelaksanaan,
+    jenisLayanan: w.jenisLayanan,
+    tahapSaatIni: w.tahapSaatIni,
+    status: w.status,
+    catatan: w.status === "ditolak" ? w.catatan : undefined,
     updatedAt: w.updatedAt,
   };
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db, wbpTable, logNotifikasiTable } from "@/lib/db";
 import { eq, count, desc } from "drizzle-orm";
-import { requireAuth } from "@/lib/auth/session";
+import { requireAuth, requireRole } from "@/lib/auth/session";
 import { kirimWhatsApp, buatPesan } from "@/lib/whatsapp";
 import { z } from "zod";
 
@@ -13,7 +13,7 @@ const sendNotifSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    await requireAuth();
+    await requireRole("super_admin", "admin", "operator");
     const parsed = sendNotifSchema.safeParse(await request.json());
     if (!parsed.success) return NextResponse.json({ error: parsed.error.message }, { status: 400 });
     const { wbpId, nomorTujuan, pesan } = parsed.data;

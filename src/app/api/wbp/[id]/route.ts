@@ -39,7 +39,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    await requireAuth();
+    await requireRole("super_admin", "admin", "operator");
     const { id } = await params;
     const parsed = updateWbpSchema.safeParse(await request.json());
     if (!parsed.success) return NextResponse.json({ error: parsed.error.message }, { status: 400 });

@@ -67,3 +67,6 @@ tsconfig.base.json
 # OS
 desktop.ini
 ehthumbs.db
+
+# Supabase CLI temp
+supabase/.temp/

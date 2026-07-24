@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence, useReducedMotion, type Variants } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion, type Variants } from "motion/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 

@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Loader2, ArrowLeft, Save, Trash2, AlertTriangle, Send, History, User, Phone, Info, Copy, RefreshCw, CheckCircle2, ExternalLink, ShieldCheck, Download, CalendarIcon } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
-import { useQueryClient } from "@/lib/safe-react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { JENIS_LAYANAN_LABELS, TAHAP_LABELS, STATUS_LABELS, TAHAP_ORDER } from "@/lib/constants";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";

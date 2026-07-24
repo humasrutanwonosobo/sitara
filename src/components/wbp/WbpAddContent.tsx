@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Loader2, ArrowLeft, Save, User, BarChart2, Phone, Info, CheckCircle2 } from "lucide-react";
-import { useQueryClient } from "@/lib/safe-react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { JENIS_LAYANAN_LABELS, TAHAP_LABELS, STATUS_LABELS } from "@/lib/constants";
 import { useState } from "react";
 import { toast } from "sonner";

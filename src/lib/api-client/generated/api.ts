@@ -5,7 +5,7 @@
  * SITARA - Sistem Informasi Tracking Reintegrasi Warga Binaan
  * OpenAPI spec version: 0.1.0
  */
-import { useMutation, useQuery } from "@/lib/safe-react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
   MutationFunction,
   QueryFunction,

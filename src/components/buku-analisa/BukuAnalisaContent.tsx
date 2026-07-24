@@ -7,7 +7,7 @@ import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { JENIS_LAYANAN_LABELS, TAHAP_ORDER } from "@/lib/constants";
 import { Search, Download, ExternalLink, CheckCircle2, Circle, Calendar, Printer } from "lucide-react";
-import * as XLSX from "xlsx";
+import { exportWorkbook } from "@/lib/excel-export";
 
 const ANALISA_COLS = [
   { key: "verifikasi_rutan",  short: "Verifikasi\nBerkas Rutan" },
@@ -117,7 +117,7 @@ export default function BukuAnalisa() {
     return matchSearch && matchJenis;
   });
 
-  const handleExportXLSX = () => {
+  const handleExportXLSX = async () => {
     const now = new Date();
     const tsDisplay = now.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
       + " · " + now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
@@ -191,81 +191,51 @@ export default function BukuAnalisa() {
       ["Data bersumber dari Sistem Database Pemasyarakatan (SDP) Kemenimipas RI", ...Array(TOTAL_COLS - 1).fill("")],
     ];
 
-    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    const dataStartRow = 9;
 
-    // Merge cells
-    const dataStartRow = 9; // 0-indexed row of first data header (row 8 = header 1, row 9 = header 2)
-    ws["!merges"] = [
-      // Kop
-      { s: { r: 0, c: 0 }, e: { r: 0, c: TOTAL_COLS - 1 } },
-      { s: { r: 1, c: 0 }, e: { r: 1, c: TOTAL_COLS - 1 } },
-      // Judul
-      { s: { r: 3, c: 0 }, e: { r: 3, c: TOTAL_COLS - 1 } },
-      // Metadata
-      { s: { r: 5, c: 2 }, e: { r: 5, c: 6 } },
-      { s: { r: 5, c: 9 }, e: { r: 5, c: TOTAL_COLS - 1 } },
-      // Header: "STATUS PROSES" span 8 cols (H-O = index 7-14)
-      { s: { r: dataStartRow - 1, c: 7 }, e: { r: dataStartRow - 1, c: 14 } },
-      // Header baris 1: Non-tahap columns — span 2 rows
-      { s: { r: dataStartRow - 1, c: 0 }, e: { r: dataStartRow, c: 0 } },   // No
-      { s: { r: dataStartRow - 1, c: 1 }, e: { r: dataStartRow, c: 1 } },   // Nama
-      { s: { r: dataStartRow - 1, c: 2 }, e: { r: dataStartRow, c: 2 } },   // No.Reg
-      { s: { r: dataStartRow - 1, c: 3 }, e: { r: dataStartRow, c: 3 } },   // Alamat
-      { s: { r: dataStartRow - 1, c: 4 }, e: { r: dataStartRow, c: 4 } },   // Perkara
-      { s: { r: dataStartRow - 1, c: 5 }, e: { r: dataStartRow, c: 5 } },   // Jenis Layanan
-      { s: { r: dataStartRow - 1, c: 6 }, e: { r: dataStartRow, c: 6 } },   // Status
-      { s: { r: dataStartRow - 1, c: 15 }, e: { r: dataStartRow, c: 15 } }, // Tgl Pelaksanaan
-      { s: { r: dataStartRow - 1, c: 16 }, e: { r: dataStartRow, c: 16 } }, // Keterangan
-      { s: { r: dataStartRow - 1, c: 17 }, e: { r: dataStartRow, c: 17 } }, // Tgl Update
-      // Ringkasan title
-      { s: { r: aoa.length - 9, c: 0 }, e: { r: aoa.length - 9, c: TOTAL_COLS - 1 } },
-      // Legenda title
-      { s: { r: aoa.length - 6, c: 0 }, e: { r: aoa.length - 6, c: TOTAL_COLS - 1 } },
-      // Footer
-      { s: { r: aoa.length - 2, c: 0 }, e: { r: aoa.length - 2, c: TOTAL_COLS - 1 } },
-      { s: { r: aoa.length - 1, c: 0 }, e: { r: aoa.length - 1, c: TOTAL_COLS - 1 } },
-    ];
-
-    // Column widths
-    ws["!cols"] = [
-      { wch: 5 },   // A: No
-      { wch: 28 },  // B: Nama
-      { wch: 16 },  // C: No. Reg
-      { wch: 30 },  // D: Alamat
-      { wch: 22 },  // E: Perkara
-      { wch: 18 },  // F: Jenis Layanan
-      { wch: 12 },  // G: Status
-      { wch: 14 },  // H: Verifikasi Rutan
-      { wch: 14 },  // I: Pengusulan Litmas
-      { wch: 14 },  // J: Sidang TPP
-      { wch: 14 },  // K: Upload SDP
-      { wch: 14 },  // L: Verifikasi Kanwil
-      { wch: 14 },  // M: Ditjen PAS
-      { wch: 16 },  // N: SK Terbit
-      { wch: 12 },  // O: Turun SK
-      { wch: 18 },  // P: Tgl Pelaksanaan
-      { wch: 30 },  // Q: Keterangan
-      { wch: 14 },  // R: Tgl Update
-    ];
-
-    // Row heights for header rows
-    ws["!rows"] = [];
-    ws["!rows"][0] = { hpt: 22 };
-    ws["!rows"][1] = { hpt: 18 };
-    ws["!rows"][3] = { hpt: 20 };
-    ws["!rows"][dataStartRow - 1] = { hpt: 32 };
-    ws["!rows"][dataStartRow]     = { hpt: 28 };
-
-    const wb = XLSX.utils.book_new();
-    wb.Props = {
-      Title: "Buku Analisa Proses Reintegrasi Warga Binaan",
-      Subject: "Reintegrasi Narapidana",
-      Author: "SITARA — Rumah Tahanan Negara Kelas IIB Wonosobo",
-      Company: "Kementerian Imigrasi dan Pemasyarakatan RI",
-      CreatedDate: now,
-    };
-    XLSX.utils.book_append_sheet(wb, ws, "Buku Analisa");
-    XLSX.writeFile(wb, `SITARA_BukuAnalisa_${tsFile}.xlsx`);
+    await exportWorkbook({
+      props: {
+        Title: "Buku Analisa Proses Reintegrasi Warga Binaan",
+        Subject: "Reintegrasi Narapidana",
+        Author: "SITARA — Rumah Tahanan Negara Kelas IIB Wonosobo",
+        Company: "Kementerian Imigrasi dan Pemasyarakatan RI",
+        CreatedDate: now,
+      },
+      sheets: [{
+        aoa,
+        merges: [
+          { s: { r: 0, c: 0 }, e: { r: 0, c: TOTAL_COLS - 1 } },
+          { s: { r: 1, c: 0 }, e: { r: 1, c: TOTAL_COLS - 1 } },
+          { s: { r: 3, c: 0 }, e: { r: 3, c: TOTAL_COLS - 1 } },
+          { s: { r: 5, c: 2 }, e: { r: 5, c: 6 } },
+          { s: { r: 5, c: 9 }, e: { r: 5, c: TOTAL_COLS - 1 } },
+          { s: { r: dataStartRow - 1, c: 7 }, e: { r: dataStartRow - 1, c: 14 } },
+          { s: { r: dataStartRow - 1, c: 0 }, e: { r: dataStartRow, c: 0 } },
+          { s: { r: dataStartRow - 1, c: 1 }, e: { r: dataStartRow, c: 1 } },
+          { s: { r: dataStartRow - 1, c: 2 }, e: { r: dataStartRow, c: 2 } },
+          { s: { r: dataStartRow - 1, c: 3 }, e: { r: dataStartRow, c: 3 } },
+          { s: { r: dataStartRow - 1, c: 4 }, e: { r: dataStartRow, c: 4 } },
+          { s: { r: dataStartRow - 1, c: 5 }, e: { r: dataStartRow, c: 5 } },
+          { s: { r: dataStartRow - 1, c: 6 }, e: { r: dataStartRow, c: 6 } },
+          { s: { r: dataStartRow - 1, c: 15 }, e: { r: dataStartRow, c: 15 } },
+          { s: { r: dataStartRow - 1, c: 16 }, e: { r: dataStartRow, c: 16 } },
+          { s: { r: dataStartRow - 1, c: 17 }, e: { r: dataStartRow, c: 17 } },
+          { s: { r: aoa.length - 9, c: 0 }, e: { r: aoa.length - 9, c: TOTAL_COLS - 1 } },
+          { s: { r: aoa.length - 6, c: 0 }, e: { r: aoa.length - 6, c: TOTAL_COLS - 1 } },
+          { s: { r: aoa.length - 2, c: 0 }, e: { r: aoa.length - 2, c: TOTAL_COLS - 1 } },
+          { s: { r: aoa.length - 1, c: 0 }, e: { r: aoa.length - 1, c: TOTAL_COLS - 1 } },
+        ],
+        cols: [
+          { wch: 5 }, { wch: 28 }, { wch: 16 }, { wch: 30 }, { wch: 22 },
+          { wch: 18 }, { wch: 12 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
+          { wch: 14 }, { wch: 14 }, { wch: 14 }, { wch: 16 }, { wch: 12 },
+          { wch: 18 }, { wch: 30 }, { wch: 14 },
+        ],
+        rows: (() => { const r = []; r[0] = { hpt: 22 }; r[1] = { hpt: 18 }; r[3] = { hpt: 20 }; r[dataStartRow - 1] = { hpt: 32 }; r[dataStartRow] = { hpt: 28 }; return r; })(),
+        sheetName: "Buku Analisa",
+      }],
+      filename: `SITARA_BukuAnalisa_${tsFile}.xlsx`,
+    });
   };
 
   const handlePrint = () => {

@@ -23,7 +23,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { JENIS_LAYANAN_LABELS, TAHAP_LABELS, STATUS_LABELS } from "@/lib/constants";
 import { JenisLayananBadge } from "@/components/ui/jenis-layanan-badge";
 import { toast } from "sonner";
-import { useQueryClient } from "@/lib/safe-react-query";
+import { useQueryClient } from "@tanstack/react-query";
 
 function StatusPill({ status }: { status: string }) {
   const map: Record<string, string> = {
